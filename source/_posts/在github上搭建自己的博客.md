@@ -33,12 +33,12 @@ npm install
 # 将工作目录交由git管理
 git init
 # 在github上对theme-next/hexo-theme-next进行fork
-git submodule add https://github.com/souhup/hexo-theme-next.git themes/next
+git submodule add git@github.com:souhup/hexo-theme-next.git themes/next
 cd themes/next
-git remote add upstream https://github.com/theme-next/hexo-theme-next.git
+git remote add upstream git@github.com:theme-next/hexo-theme-next.git
 # 将开发部分保存到source分支
 git checkout -b source
-git remote add origin https://github.com/souhup/souhup.github.io.git
+git remote add origin git@github.com:souhup/souhup.github.io.git
 ```
 
 ### 定制博客
@@ -212,7 +212,7 @@ npm install hexo-deployer-git --save
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
   type: git
-  repo: https://github.com/souhup/souhup.github.io.git
+  repo: git@github.com:souhup/souhup.github.io.git
   branch: master
 ```
 
