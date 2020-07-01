@@ -207,6 +207,98 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://souhup.top/2020/07/01/%E6%90%AD%E5%BB%BAetcd%E9%9B%86%E7%BE%A4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="souhup">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="美好的每一天">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/07/01/%E6%90%AD%E5%BB%BAetcd%E9%9B%86%E7%BE%A4/" class="post-title-link" itemprop="url">单机搭建etcd集群</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-07-01 23:56:00" itemprop="dateCreated datePublished" datetime="2020-07-01T23:56:00+08:00">2020-07-01</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-07-02 00:00:23" itemprop="dateModified" datetime="2020-07-02T00:00:23+08:00">2020-07-02</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/tutorial/" itemprop="url" rel="index">
+                    <span itemprop="name">tutorial</span>
+                  </a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>在测试时, 有时需在单机搭建etcd集群, 现将步骤记录如下</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line">docker stop etcd-1 etcd-2 etcd-3</span><br><span class="line">docker rm etcd-1 etcd-2 etcd-3</span><br><span class="line"></span><br><span class="line">THIS_IP=??</span><br><span class="line">ETCD_HOSTS=s1=http://<span class="variable">$THIS_IP</span>:?,s2=http://<span class="variable">$THIS_IP</span>:?,s3=http://<span class="variable">$THIS_IP</span>:?</span><br><span class="line">ETCD_TOKEN=??</span><br><span class="line"></span><br><span class="line">CON_NAME=etcd-1</span><br><span class="line">THIS_NAME=s1</span><br><span class="line">THIS_CLIENT_PORT=?</span><br><span class="line">THIS_PEER_PORT=?</span><br><span class="line">docker run -d \</span><br><span class="line">  --name <span class="variable">$CON_NAME</span> \</span><br><span class="line">  --restart always \</span><br><span class="line">  --net host \</span><br><span class="line">  quay.io/coreos/etcd:v3 \</span><br><span class="line">  /usr/<span class="built_in">local</span>/bin/etcd \</span><br><span class="line">  --name <span class="variable">$&#123;THIS_NAME&#125;</span> \</span><br><span class="line">  --data-dir /etcd-data \</span><br><span class="line">  --listen-client-urls http://<span class="variable">$&#123;THIS_IP&#125;</span>:<span class="variable">$&#123;THIS_CLIENT_PORT&#125;</span> \</span><br><span class="line">  --advertise-client-urls http://<span class="variable">$&#123;THIS_IP&#125;</span>:<span class="variable">$&#123;THIS_CLIENT_PORT&#125;</span> \</span><br><span class="line">  --listen-peer-urls http://<span class="variable">$&#123;THIS_IP&#125;</span>:<span class="variable">$&#123;THIS_PEER_PORT&#125;</span> \</span><br><span class="line">  --initial-advertise-peer-urls http://<span class="variable">$&#123;THIS_IP&#125;</span>:<span class="variable">$&#123;THIS_PEER_PORT&#125;</span> \</span><br><span class="line">  --initial-cluster <span class="variable">$ETCD_HOSTS</span> \</span><br><span class="line">  --initial-cluster-state new \</span><br><span class="line">  --initial-cluster-token <span class="variable">$&#123;ETCD_TOKEN&#125;</span></span><br><span class="line"></span><br><span class="line">CON_NAME=etcd-2</span><br><span class="line">THIS_NAME=s2</span><br><span class="line">THIS_CLIENT_PORT=?</span><br><span class="line">THIS_PEER_PORT=?</span><br><span class="line">docker run -d \</span><br><span class="line">  --name <span class="variable">$CON_NAME</span> \</span><br><span class="line">  --restart always \</span><br><span class="line">  --net host \</span><br><span class="line">  quay.io/coreos/etcd:v3 \</span><br><span class="line">  /usr/<span class="built_in">local</span>/bin/etcd \</span><br><span class="line">  --name <span class="variable">$&#123;THIS_NAME&#125;</span> \</span><br><span class="line">  --data-dir /etcd-data \</span><br><span class="line">  --listen-client-urls http://<span class="variable">$&#123;THIS_IP&#125;</span>:<span class="variable">$&#123;THIS_CLIENT_PORT&#125;</span> \</span><br><span class="line">  --advertise-client-urls http://<span class="variable">$&#123;THIS_IP&#125;</span>:<span class="variable">$&#123;THIS_CLIENT_PORT&#125;</span> \</span><br><span class="line">  --listen-peer-urls http://<span class="variable">$&#123;THIS_IP&#125;</span>:<span class="variable">$&#123;THIS_PEER_PORT&#125;</span> \</span><br><span class="line">  --initial-advertise-peer-urls http://<span class="variable">$&#123;THIS_IP&#125;</span>:<span class="variable">$&#123;THIS_PEER_PORT&#125;</span> \</span><br><span class="line">  --initial-cluster <span class="variable">$ETCD_HOSTS</span> \</span><br><span class="line">  --initial-cluster-state new \</span><br><span class="line">  --initial-cluster-token <span class="variable">$&#123;ETCD_TOKEN&#125;</span></span><br><span class="line"></span><br><span class="line">CON_NAME=etcd-3</span><br><span class="line">THIS_NAME=s3</span><br><span class="line">THIS_CLIENT_PORT=?</span><br><span class="line">THIS_PEER_PORT=?</span><br><span class="line">docker run -d \</span><br><span class="line">  --name <span class="variable">$CON_NAME</span> \</span><br><span class="line">  --restart always \</span><br><span class="line">  --net host \</span><br><span class="line">  quay.io/coreos/etcd:v3 \</span><br><span class="line">  /usr/<span class="built_in">local</span>/bin/etcd \</span><br><span class="line">  --name <span class="variable">$&#123;THIS_NAME&#125;</span> \</span><br><span class="line">  --data-dir /etcd-data \</span><br><span class="line">  --listen-client-urls http://<span class="variable">$&#123;THIS_IP&#125;</span>:<span class="variable">$&#123;THIS_CLIENT_PORT&#125;</span> \</span><br><span class="line">  --advertise-client-urls http://<span class="variable">$&#123;THIS_IP&#125;</span>:<span class="variable">$&#123;THIS_CLIENT_PORT&#125;</span> \</span><br><span class="line">  --listen-peer-urls http://<span class="variable">$&#123;THIS_IP&#125;</span>:<span class="variable">$&#123;THIS_PEER_PORT&#125;</span> \</span><br><span class="line">  --initial-advertise-peer-urls http://<span class="variable">$&#123;THIS_IP&#125;</span>:<span class="variable">$&#123;THIS_PEER_PORT&#125;</span> \</span><br><span class="line">  --initial-cluster <span class="variable">$ETCD_HOSTS</span> \</span><br><span class="line">  --initial-cluster-state new \</span><br><span class="line">  --initial-cluster-token <span class="variable">$&#123;ETCD_TOKEN&#125;</span></span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://souhup.top/2020/07/01/%E8%AF%81%E4%B9%A6%E7%AD%BE%E5%8F%91/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -802,7 +894,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">5</span>
+          <span class="site-state-item-count">6</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -815,7 +907,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-count">15</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -849,12 +941,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">9k</span>
+    <span title="站点总字数">11k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">15 分钟</span>
+    <span title="站点阅读时长">19 分钟</span>
 </div>
 
         

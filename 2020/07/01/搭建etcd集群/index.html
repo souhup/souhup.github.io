@@ -50,18 +50,18 @@
   };
 </script>
 
-  <meta name="description" content="在进行测试时，我们可以自己生成根证书和服务端证书 生成根证书123456# 生成私钥openssl genrsa -out ca.key# 生成请求openssl req -new -key ca.key -out ca.csr -subj &quot;&#x2F;C=CN&#x2F;ST=XXXX&#x2F;L=XXXX&#x2F;O=XXXX&#x2F;OU=XXXX&#x2F;CN=XXXX&#x2F;emailAddress=XXX@XXX.com&quot;# 生成根证书op">
-<meta name="keywords" content="certificate,证书">
+  <meta name="description" content="在测试时, 有时需在单机搭建etcd集群, 现将步骤记录如下 12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455565758596061626364656667#!&#x2F;bin&#x2F;bashdocker stop etcd-1 etcd-2 etcd-3d">
+<meta name="keywords" content="etcd">
 <meta property="og:type" content="article">
-<meta property="og:title" content="证书签发">
-<meta property="og:url" content="https:&#x2F;&#x2F;souhup.top&#x2F;2020&#x2F;07&#x2F;01&#x2F;%E8%AF%81%E4%B9%A6%E7%AD%BE%E5%8F%91&#x2F;index.html">
+<meta property="og:title" content="单机搭建etcd集群">
+<meta property="og:url" content="https:&#x2F;&#x2F;souhup.top&#x2F;2020&#x2F;07&#x2F;01&#x2F;%E6%90%AD%E5%BB%BAetcd%E9%9B%86%E7%BE%A4&#x2F;index.html">
 <meta property="og:site_name" content="美好的每一天">
-<meta property="og:description" content="在进行测试时，我们可以自己生成根证书和服务端证书 生成根证书123456# 生成私钥openssl genrsa -out ca.key# 生成请求openssl req -new -key ca.key -out ca.csr -subj &quot;&#x2F;C=CN&#x2F;ST=XXXX&#x2F;L=XXXX&#x2F;O=XXXX&#x2F;OU=XXXX&#x2F;CN=XXXX&#x2F;emailAddress=XXX@XXX.com&quot;# 生成根证书op">
+<meta property="og:description" content="在测试时, 有时需在单机搭建etcd集群, 现将步骤记录如下 12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455565758596061626364656667#!&#x2F;bin&#x2F;bashdocker stop etcd-1 etcd-2 etcd-3d">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-07-01T15:34:12.628Z">
+<meta property="og:updated_time" content="2020-07-01T16:00:23.318Z">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="https://souhup.top/2020/07/01/%E8%AF%81%E4%B9%A6%E7%AD%BE%E5%8F%91/">
+<link rel="canonical" href="https://souhup.top/2020/07/01/%E6%90%AD%E5%BB%BAetcd%E9%9B%86%E7%BE%A4/">
 
 
 <script id="page-configurations">
@@ -75,7 +75,7 @@
   };
 </script>
 
-  <title>证书签发 | 美好的每一天</title>
+  <title>单机搭建etcd集群 | 美好的每一天</title>
   
 
 
@@ -211,7 +211,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://souhup.top/2020/07/01/%E8%AF%81%E4%B9%A6%E7%AD%BE%E5%8F%91/">
+    <link itemprop="mainEntityOfPage" href="https://souhup.top/2020/07/01/%E6%90%AD%E5%BB%BAetcd%E9%9B%86%E7%BE%A4/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -224,7 +224,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          证书签发
+          单机搭建etcd集群
         </h1>
 
         <div class="post-meta">
@@ -233,10 +233,16 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2020-07-01 23:33:00 / 修改时间：23:34:12" itemprop="dateCreated datePublished" datetime="2020-07-01T23:33:00+08:00">2020-07-01</time>
+              <time title="创建时间：2020-07-01 23:56:00" itemprop="dateCreated datePublished" datetime="2020-07-01T23:56:00+08:00">2020-07-01</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-07-02 00:00:23" itemprop="dateModified" datetime="2020-07-02T00:00:23+08:00">2020-07-02</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="fa fa-folder-o"></i>
@@ -255,14 +261,14 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>1.7k</span>
+              <span>2.2k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="fa fa-clock-o"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
+              <span>4 分钟</span>
             </span>
 
         </div>
@@ -274,12 +280,10 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>在进行测试时，我们可以自己生成<code>根证书</code>和<code>服务端证书</code></p>
-<h3 id="生成根证书"><a href="#生成根证书" class="headerlink" title="生成根证书"></a>生成根证书</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 生成私钥</span></span><br><span class="line">openssl genrsa -out ca.key</span><br><span class="line"><span class="comment"># 生成请求</span></span><br><span class="line">openssl req -new -key ca.key -out ca.csr -subj <span class="string">"/C=CN/ST=XXXX/L=XXXX/O=XXXX/OU=XXXX/CN=XXXX/emailAddress=XXX@XXX.com"</span></span><br><span class="line"><span class="comment"># 生成根证书</span></span><br><span class="line">openssl x509 -req -days 36500 -sha256 -signkey ca.key -<span class="keyword">in</span> ca.csr -out ca.cer -extfile &lt;(<span class="built_in">printf</span> <span class="string">"subjectKeyIdentifier=hash\nauthorityKeyIdentifier=keyid,issuer\nbasicConstraints=CA:TRUE"</span>)</span><br></pre></td></tr></table></figure>
+        <p>在测试时, 有时需在单机搭建etcd集群, 现将步骤记录如下</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line">docker stop etcd-1 etcd-2 etcd-3</span><br><span class="line">docker rm etcd-1 etcd-2 etcd-3</span><br><span class="line"></span><br><span class="line">THIS_IP=??</span><br><span class="line">ETCD_HOSTS=s1=http://<span class="variable">$THIS_IP</span>:?,s2=http://<span class="variable">$THIS_IP</span>:?,s3=http://<span class="variable">$THIS_IP</span>:?</span><br><span class="line">ETCD_TOKEN=??</span><br><span class="line"></span><br><span class="line">CON_NAME=etcd-1</span><br><span class="line">THIS_NAME=s1</span><br><span class="line">THIS_CLIENT_PORT=?</span><br><span class="line">THIS_PEER_PORT=?</span><br><span class="line">docker run -d \</span><br><span class="line">  --name <span class="variable">$CON_NAME</span> \</span><br><span class="line">  --restart always \</span><br><span class="line">  --net host \</span><br><span class="line">  quay.io/coreos/etcd:v3 \</span><br><span class="line">  /usr/<span class="built_in">local</span>/bin/etcd \</span><br><span class="line">  --name <span class="variable">$&#123;THIS_NAME&#125;</span> \</span><br><span class="line">  --data-dir /etcd-data \</span><br><span class="line">  --listen-client-urls http://<span class="variable">$&#123;THIS_IP&#125;</span>:<span class="variable">$&#123;THIS_CLIENT_PORT&#125;</span> \</span><br><span class="line">  --advertise-client-urls http://<span class="variable">$&#123;THIS_IP&#125;</span>:<span class="variable">$&#123;THIS_CLIENT_PORT&#125;</span> \</span><br><span class="line">  --listen-peer-urls http://<span class="variable">$&#123;THIS_IP&#125;</span>:<span class="variable">$&#123;THIS_PEER_PORT&#125;</span> \</span><br><span class="line">  --initial-advertise-peer-urls http://<span class="variable">$&#123;THIS_IP&#125;</span>:<span class="variable">$&#123;THIS_PEER_PORT&#125;</span> \</span><br><span class="line">  --initial-cluster <span class="variable">$ETCD_HOSTS</span> \</span><br><span class="line">  --initial-cluster-state new \</span><br><span class="line">  --initial-cluster-token <span class="variable">$&#123;ETCD_TOKEN&#125;</span></span><br><span class="line"></span><br><span class="line">CON_NAME=etcd-2</span><br><span class="line">THIS_NAME=s2</span><br><span class="line">THIS_CLIENT_PORT=?</span><br><span class="line">THIS_PEER_PORT=?</span><br><span class="line">docker run -d \</span><br><span class="line">  --name <span class="variable">$CON_NAME</span> \</span><br><span class="line">  --restart always \</span><br><span class="line">  --net host \</span><br><span class="line">  quay.io/coreos/etcd:v3 \</span><br><span class="line">  /usr/<span class="built_in">local</span>/bin/etcd \</span><br><span class="line">  --name <span class="variable">$&#123;THIS_NAME&#125;</span> \</span><br><span class="line">  --data-dir /etcd-data \</span><br><span class="line">  --listen-client-urls http://<span class="variable">$&#123;THIS_IP&#125;</span>:<span class="variable">$&#123;THIS_CLIENT_PORT&#125;</span> \</span><br><span class="line">  --advertise-client-urls http://<span class="variable">$&#123;THIS_IP&#125;</span>:<span class="variable">$&#123;THIS_CLIENT_PORT&#125;</span> \</span><br><span class="line">  --listen-peer-urls http://<span class="variable">$&#123;THIS_IP&#125;</span>:<span class="variable">$&#123;THIS_PEER_PORT&#125;</span> \</span><br><span class="line">  --initial-advertise-peer-urls http://<span class="variable">$&#123;THIS_IP&#125;</span>:<span class="variable">$&#123;THIS_PEER_PORT&#125;</span> \</span><br><span class="line">  --initial-cluster <span class="variable">$ETCD_HOSTS</span> \</span><br><span class="line">  --initial-cluster-state new \</span><br><span class="line">  --initial-cluster-token <span class="variable">$&#123;ETCD_TOKEN&#125;</span></span><br><span class="line"></span><br><span class="line">CON_NAME=etcd-3</span><br><span class="line">THIS_NAME=s3</span><br><span class="line">THIS_CLIENT_PORT=?</span><br><span class="line">THIS_PEER_PORT=?</span><br><span class="line">docker run -d \</span><br><span class="line">  --name <span class="variable">$CON_NAME</span> \</span><br><span class="line">  --restart always \</span><br><span class="line">  --net host \</span><br><span class="line">  quay.io/coreos/etcd:v3 \</span><br><span class="line">  /usr/<span class="built_in">local</span>/bin/etcd \</span><br><span class="line">  --name <span class="variable">$&#123;THIS_NAME&#125;</span> \</span><br><span class="line">  --data-dir /etcd-data \</span><br><span class="line">  --listen-client-urls http://<span class="variable">$&#123;THIS_IP&#125;</span>:<span class="variable">$&#123;THIS_CLIENT_PORT&#125;</span> \</span><br><span class="line">  --advertise-client-urls http://<span class="variable">$&#123;THIS_IP&#125;</span>:<span class="variable">$&#123;THIS_CLIENT_PORT&#125;</span> \</span><br><span class="line">  --listen-peer-urls http://<span class="variable">$&#123;THIS_IP&#125;</span>:<span class="variable">$&#123;THIS_PEER_PORT&#125;</span> \</span><br><span class="line">  --initial-advertise-peer-urls http://<span class="variable">$&#123;THIS_IP&#125;</span>:<span class="variable">$&#123;THIS_PEER_PORT&#125;</span> \</span><br><span class="line">  --initial-cluster <span class="variable">$ETCD_HOSTS</span> \</span><br><span class="line">  --initial-cluster-state new \</span><br><span class="line">  --initial-cluster-token <span class="variable">$&#123;ETCD_TOKEN&#125;</span></span><br></pre></td></tr></table></figure>
 
-<h3 id="生成单域名证书"><a href="#生成单域名证书" class="headerlink" title="生成单域名证书"></a>生成单域名证书</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 生成单域名证书</span></span><br><span class="line">domain=<span class="variable">$1</span></span><br><span class="line"><span class="comment"># 创建文件夹</span></span><br><span class="line">mkdir -p <span class="variable">$domain</span></span><br><span class="line"><span class="comment"># 生成秘钥</span></span><br><span class="line">openssl genrsa -out <span class="variable">$domain</span>/<span class="variable">$domain</span>.key</span><br><span class="line"><span class="comment"># 生成请求</span></span><br><span class="line">openssl req -new -key <span class="variable">$domain</span>/<span class="variable">$domain</span>.key -out <span class="variable">$domain</span>/<span class="variable">$domain</span>.csr -subj <span class="string">"/C=CN/ST=XXX/L=XXX/O=XXX/OU=XXX/CN=<span class="variable">$domain</span>/emailAddress=XXX@XXX.com"</span> -addext <span class="string">"subjectAltName=DNS:<span class="variable">$domain</span>"</span></span><br><span class="line"><span class="comment"># 生成证书</span></span><br><span class="line">openssl x509 -req -<span class="keyword">in</span> <span class="variable">$domain</span>/<span class="variable">$domain</span>.csr -CA ../rootca/root.cer -CAkey ../rootca/root.key -CAcreateserial -out <span class="variable">$domain</span>/<span class="variable">$domain</span>.crt -days 730 -extfile &lt;(<span class="built_in">printf</span> <span class="string">"subjectKeyIdentifier=hash\nauthorityKeyIdentifier=keyid,issuer\nbasicConstraints=CA:FALSE\nkeyUsage=digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment\nextendedKeyUsage=serverAuth,OCSPSigning\nsubjectAltName=DNS:<span class="variable">$domain</span>"</span>)</span><br></pre></td></tr></table></figure>
 
-<h3 id="生成泛域名证书"><a href="#生成泛域名证书" class="headerlink" title="生成泛域名证书"></a>生成泛域名证书</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 生成泛域名证书</span></span><br><span class="line">domain=<span class="variable">$1</span></span><br><span class="line"><span class="comment"># 创建文件夹</span></span><br><span class="line">mkdir -p <span class="variable">$domain</span></span><br><span class="line"><span class="comment"># 生成秘钥</span></span><br><span class="line">openssl genrsa -out <span class="variable">$domain</span>/<span class="variable">$domain</span>.key</span><br><span class="line"><span class="comment"># 生成请求</span></span><br><span class="line">openssl req -new -key <span class="variable">$domain</span>/<span class="variable">$domain</span>.key -out <span class="variable">$domain</span>/<span class="variable">$domain</span>.csr -subj <span class="string">"/C=CN/ST=XXX/L=XXX/O=XXX/OU=XXX/CN=<span class="variable">$domain</span>/emailAddress=XXX@XXX.com"</span> -addext <span class="string">"subjectAltName=DNS:*.<span class="variable">$domain</span>,DNS:<span class="variable">$domain</span>"</span></span><br><span class="line"><span class="comment"># 生成证书</span></span><br><span class="line">openssl x509 -req -<span class="keyword">in</span> <span class="variable">$domain</span>/<span class="variable">$domain</span>.csr -CA ../rootca/root.cer -CAkey ../rootca/root.key -CAcreateserial -out <span class="variable">$domain</span>/<span class="variable">$domain</span>.crt -days 730 -extfile &lt;(<span class="built_in">printf</span> <span class="string">"subjectKeyIdentifier=hash\nauthorityKeyIdentifier=keyid,issuer\nbasicConstraints=CA:FALSE\nkeyUsage=digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment\nextendedKeyUsage=serverAuth,OCSPSigning\nsubjectAltName=DNS:*.<span class="variable">$domain</span>,DNS:<span class="variable">$domain</span>"</span>)</span><br></pre></td></tr></table></figure>
     </div>
 
     
@@ -288,25 +292,21 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/certificate/" rel="tag"># certificate</a>
-              <a href="/tags/%E8%AF%81%E4%B9%A6/" rel="tag"># 证书</a>
+              <a href="/tags/etcd/" rel="tag"># etcd</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-next post-nav-item">
-                <a href="/2020/06/01/golang%E7%9A%84%E4%B8%80%E4%B8%AA%E8%87%AA%E9%87%8D%E5%86%99%E7%A8%8B%E5%BA%8F/" rel="next" title="golang的一个自重写程序">
-                  <i class="fa fa-chevron-left"></i> golang的一个自重写程序
+                <a href="/2020/07/01/%E8%AF%81%E4%B9%A6%E7%AD%BE%E5%8F%91/" rel="next" title="证书签发">
+                  <i class="fa fa-chevron-left"></i> 证书签发
                 </a>
             </div>
 
             <span class="post-nav-divider"></span>
 
             <div class="post-nav-prev post-nav-item">
-                <a href="/2020/07/01/%E6%90%AD%E5%BB%BAetcd%E9%9B%86%E7%BE%A4/" rel="prev" title="单机搭建etcd集群">
-                  单机搭建etcd集群 <i class="fa fa-chevron-right"></i>
-                </a>
             </div>
           </div>
       </footer>
@@ -345,7 +345,6 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#生成根证书"><span class="nav-number">1.</span> <span class="nav-text">生成根证书</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#生成单域名证书"><span class="nav-number">2.</span> <span class="nav-text">生成单域名证书</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#生成泛域名证书"><span class="nav-number">3.</span> <span class="nav-text">生成泛域名证书</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
