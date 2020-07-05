@@ -4,6 +4,41 @@
   
     
     <entry>
+      <title>搭建utils.pro</title>
+      <link href="/2020/07/05/%E6%90%AD%E5%BB%BAutils.pro/"/>
+      <url>/2020/07/05/%E6%90%AD%E5%BB%BAutils.pro/</url>
+      
+        <content type="html"><![CDATA[<p>由于想要搭建一个可以提供各类基础功能的网站, 所以便立刻行动起来了😆.</p><h3 id="功能需求"><a href="#功能需求" class="headerlink" title="功能需求"></a>功能需求</h3><h4 id="需求1"><a href="#需求1" class="headerlink" title="需求1"></a>需求1</h4><p>提供一个查询自己公网IP的功能, </p><p>通过<code>GET</code>访问<code>http(s)://api.utils.pro/v1/myip</code>, 获取自己的公网IP与其它信息.</p><p>获取到的信息将以简单的文本形式进行展示, <code>IP:xxx.xxx.xxx.xxx, 国家(地区): xxxx, 省份: xxx, 城市: xxx, 运营商: xxx, 时区: xxx</code></p><h4 id="需求2"><a href="#需求2" class="headerlink" title="需求2"></a>需求2</h4><p>提供一个查询任意IP的功能</p><p>通过<code>GET</code>访问<code>http(s)://api.utils.pro/v1/query-ip?ip=xxx.xxx.xxx.xxx</code> 获取自己的公网IP与其它信息.</p><p>获取到的信息将以简单的文本形式进行展示, <code>IP:xxx.xxx.xxx.xxx, 国家(地区): xxxx, 省份: xxx, 城市: xxx, 运营商: xxx, 时区: xxx</code></p><h4 id="需求3"><a href="#需求3" class="headerlink" title="需求3"></a>需求3</h4><p>通过<code>curl</code>等HTTP客户端来进行文件互传.</p><p>发送方或接收方通过<code>GET</code>调用<code>http(s)://api.utils.pro/v1/data-transfer-code</code>获取一个随机密码.</p><p>通过该随机密码, 发送方通过<code>PUT</code>调用<code>http(s)://api.utils.pro/v1/data-transfer?code=xxx</code>，</p><p>接收方通过<code>GET</code>调用<code>http(s)://api.utils.pro/v1/data-transfer?code=xxx</code></p><h3 id="实现的思路"><a href="#实现的思路" class="headerlink" title="实现的思路"></a>实现的思路</h3><p>实现的话, 应该满足以下的条件</p><ul><li>足够的省钱🤣</li><li>便于之后的功能扩展</li><li>程序部署方便</li><li>考虑系统的安全性</li></ul><p>项目开发的选择如下</p><ul><li>在云厂商购买免费的<code>单域名</code>证书. </li><li>功能托管将采用的云厂商云服务器.</li><li>因为要省钱, 所以网关采用服务器内搭建Nginx而非负载均衡器, 等之后再换吧</li><li>采用云厂商的日志服务</li><li>代码托管采用<code>github</code>的私有仓库</li><li>软件库采用云厂商私有镜像仓库</li><li>暂不考虑前端设计</li><li>服务器安全性</li></ul><h3 id="购买域名"><a href="#购买域名" class="headerlink" title="购买域名"></a>购买域名</h3><p>在某云厂商购买域名<code>utils.pro</code>, 并为该域名免费的单域名证书.</p><p>之后会考虑let’s encrypt提供的免费泛域名证书</p><h3 id="创建服务器"><a href="#创建服务器" class="headerlink" title="创建服务器"></a>创建服务器</h3><p>在某云厂商购买了服务器， 配置公网IP, 并配置域名解析. </p><p>从安全角度: 创建由云厂商托管的服务器登录密钥.</p><p>从安全角度: 配置服务器安全组, 外网入网端口仅包含22,80,443</p><h3 id="配置服务器内容"><a href="#配置服务器内容" class="headerlink" title="配置服务器内容"></a>配置服务器内容</h3><p>选择操作系统<code>centos-8</code></p><p>安装软件<code>nginx</code>, <code>docker</code></p><h3 id="创建项目"><a href="#创建项目" class="headerlink" title="创建项目"></a>创建项目</h3><p>在<code>github</code>上创建私有仓库, 用来存放功能设计文档与代码实现.</p><p>后台编程语言选择<code>go</code></p><p>运营脚本语言选择<code>python</code></p><p>因为之前自己买过<code>intelij</code>家的全家桶, 所以IDE选择<code>goland</code></p><p>业务指标与性能指标采集选择<code>prometheus</code></p><p><code>prometheus</code>指标展示采用<code>grafana</code></p><h3 id="配置镜像仓库"><a href="#配置镜像仓库" class="headerlink" title="配置镜像仓库"></a>配置镜像仓库</h3><p>再某云厂商创建私有镜像仓库, 将代码源选择为<code>github</code>. 选择代码提交后满足特定TAG即可自动构建.</p><p>镜像构建后通过触发器通知云服务器.</p><p>编写python脚本用以监听特定端口, 当镜像仓库通知服务器镜像变更后, 服务器即可更新docker容器.</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> tutorial </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> website </tag>
+            
+            <tag> ECS </tag>
+            
+            <tag> docker </tag>
+            
+            <tag> github </tag>
+            
+            <tag> 镜像仓库 </tag>
+            
+            <tag> 证书 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>单机搭建etcd集群</title>
       <link href="/2020/07/01/%E6%90%AD%E5%BB%BAetcd%E9%9B%86%E7%BE%A4/"/>
       <url>/2020/07/01/%E6%90%AD%E5%BB%BAetcd%E9%9B%86%E7%BE%A4/</url>
@@ -45,9 +80,9 @@
       
         <tags>
             
-            <tag> certificate </tag>
-            
             <tag> 证书 </tag>
+            
+            <tag> certificate </tag>
             
         </tags>
       
@@ -132,9 +167,9 @@
             
             <tag> linux </tag>
             
-            <tag> centos-8 </tag>
-            
             <tag> docker </tag>
+            
+            <tag> centos-8 </tag>
             
             <tag> mysql </tag>
             

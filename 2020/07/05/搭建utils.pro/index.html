@@ -50,18 +50,18 @@
   };
 </script>
 
-  <meta name="description" content="在进行测试时，我们可以自己生成根证书和服务端证书 生成根证书123456# 生成私钥openssl genrsa -out ca.key# 生成请求openssl req -new -key ca.key -out ca.csr -subj &quot;&#x2F;C=CN&#x2F;ST=XXXX&#x2F;L=XXXX&#x2F;O=XXXX&#x2F;OU=XXXX&#x2F;CN=XXXX&#x2F;emailAddress=XXX@XXX.com&quot;# 生成根证书op">
-<meta name="keywords" content="证书,certificate">
+  <meta name="description" content="由于想要搭建一个可以提供各类基础功能的网站, 所以便立刻行动起来了😆. 功能需求需求1提供一个查询自己公网IP的功能,  通过GET访问http(s):&#x2F;&#x2F;api.utils.pro&#x2F;v1&#x2F;myip, 获取自己的公网IP与其它信息. 获取到的信息将以简单的文本形式进行展示, IP:xxx.xxx.xxx.xxx, 国家(地区): xxxx, 省份: xxx, 城市: xxx, 运营商: xxx,">
+<meta name="keywords" content="website,ECS,docker,github,镜像仓库,证书">
 <meta property="og:type" content="article">
-<meta property="og:title" content="证书签发">
-<meta property="og:url" content="https:&#x2F;&#x2F;souhup.top&#x2F;2020&#x2F;07&#x2F;01&#x2F;%E8%AF%81%E4%B9%A6%E7%AD%BE%E5%8F%91&#x2F;index.html">
+<meta property="og:title" content="搭建utils.pro">
+<meta property="og:url" content="https:&#x2F;&#x2F;souhup.top&#x2F;2020&#x2F;07&#x2F;05&#x2F;%E6%90%AD%E5%BB%BAutils.pro&#x2F;index.html">
 <meta property="og:site_name" content="美好的每一天">
-<meta property="og:description" content="在进行测试时，我们可以自己生成根证书和服务端证书 生成根证书123456# 生成私钥openssl genrsa -out ca.key# 生成请求openssl req -new -key ca.key -out ca.csr -subj &quot;&#x2F;C=CN&#x2F;ST=XXXX&#x2F;L=XXXX&#x2F;O=XXXX&#x2F;OU=XXXX&#x2F;CN=XXXX&#x2F;emailAddress=XXX@XXX.com&quot;# 生成根证书op">
+<meta property="og:description" content="由于想要搭建一个可以提供各类基础功能的网站, 所以便立刻行动起来了😆. 功能需求需求1提供一个查询自己公网IP的功能,  通过GET访问http(s):&#x2F;&#x2F;api.utils.pro&#x2F;v1&#x2F;myip, 获取自己的公网IP与其它信息. 获取到的信息将以简单的文本形式进行展示, IP:xxx.xxx.xxx.xxx, 国家(地区): xxxx, 省份: xxx, 城市: xxx, 运营商: xxx,">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-07-01T15:34:12.628Z">
+<meta property="og:updated_time" content="2020-07-05T05:48:49.159Z">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="https://souhup.top/2020/07/01/%E8%AF%81%E4%B9%A6%E7%AD%BE%E5%8F%91/">
+<link rel="canonical" href="https://souhup.top/2020/07/05/%E6%90%AD%E5%BB%BAutils.pro/">
 
 
 <script id="page-configurations">
@@ -75,7 +75,7 @@
   };
 </script>
 
-  <title>证书签发 | 美好的每一天</title>
+  <title>搭建utils.pro | 美好的每一天</title>
   
 
 
@@ -211,7 +211,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://souhup.top/2020/07/01/%E8%AF%81%E4%B9%A6%E7%AD%BE%E5%8F%91/">
+    <link itemprop="mainEntityOfPage" href="https://souhup.top/2020/07/05/%E6%90%AD%E5%BB%BAutils.pro/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -224,7 +224,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          证书签发
+          搭建utils.pro
         </h1>
 
         <div class="post-meta">
@@ -235,7 +235,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2020-07-01 23:33:00 / 修改时间：23:34:12" itemprop="dateCreated datePublished" datetime="2020-07-01T23:33:00+08:00">2020-07-01</time>
+              <time title="创建时间：2020-07-05 13:48:00 / 修改时间：13:48:49" itemprop="dateCreated datePublished" datetime="2020-07-05T13:48:00+08:00">2020-07-05</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -255,14 +255,14 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>1.7k</span>
+              <span>1.2k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="fa fa-clock-o"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
+              <span>2 分钟</span>
             </span>
 
         </div>
@@ -274,12 +274,52 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>在进行测试时，我们可以自己生成<code>根证书</code>和<code>服务端证书</code></p>
-<h3 id="生成根证书"><a href="#生成根证书" class="headerlink" title="生成根证书"></a>生成根证书</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 生成私钥</span></span><br><span class="line">openssl genrsa -out ca.key</span><br><span class="line"><span class="comment"># 生成请求</span></span><br><span class="line">openssl req -new -key ca.key -out ca.csr -subj <span class="string">"/C=CN/ST=XXXX/L=XXXX/O=XXXX/OU=XXXX/CN=XXXX/emailAddress=XXX@XXX.com"</span></span><br><span class="line"><span class="comment"># 生成根证书</span></span><br><span class="line">openssl x509 -req -days 36500 -sha256 -signkey ca.key -<span class="keyword">in</span> ca.csr -out ca.cer -extfile &lt;(<span class="built_in">printf</span> <span class="string">"subjectKeyIdentifier=hash\nauthorityKeyIdentifier=keyid,issuer\nbasicConstraints=CA:TRUE"</span>)</span><br></pre></td></tr></table></figure>
+        <p>由于想要搭建一个可以提供各类基础功能的网站, 所以便立刻行动起来了😆.</p>
+<h3 id="功能需求"><a href="#功能需求" class="headerlink" title="功能需求"></a>功能需求</h3><h4 id="需求1"><a href="#需求1" class="headerlink" title="需求1"></a>需求1</h4><p>提供一个查询自己公网IP的功能, </p>
+<p>通过<code>GET</code>访问<code>http(s)://api.utils.pro/v1/myip</code>, 获取自己的公网IP与其它信息.</p>
+<p>获取到的信息将以简单的文本形式进行展示, <code>IP:xxx.xxx.xxx.xxx, 国家(地区): xxxx, 省份: xxx, 城市: xxx, 运营商: xxx, 时区: xxx</code></p>
+<h4 id="需求2"><a href="#需求2" class="headerlink" title="需求2"></a>需求2</h4><p>提供一个查询任意IP的功能</p>
+<p>通过<code>GET</code>访问<code>http(s)://api.utils.pro/v1/query-ip?ip=xxx.xxx.xxx.xxx</code> 获取自己的公网IP与其它信息.</p>
+<p>获取到的信息将以简单的文本形式进行展示, <code>IP:xxx.xxx.xxx.xxx, 国家(地区): xxxx, 省份: xxx, 城市: xxx, 运营商: xxx, 时区: xxx</code></p>
+<h4 id="需求3"><a href="#需求3" class="headerlink" title="需求3"></a>需求3</h4><p>通过<code>curl</code>等HTTP客户端来进行文件互传.</p>
+<p>发送方或接收方通过<code>GET</code>调用<code>http(s)://api.utils.pro/v1/data-transfer-code</code>获取一个随机密码.</p>
+<p>通过该随机密码, 发送方通过<code>PUT</code>调用<code>http(s)://api.utils.pro/v1/data-transfer?code=xxx</code>，</p>
+<p>接收方通过<code>GET</code>调用<code>http(s)://api.utils.pro/v1/data-transfer?code=xxx</code></p>
+<h3 id="实现的思路"><a href="#实现的思路" class="headerlink" title="实现的思路"></a>实现的思路</h3><p>实现的话, 应该满足以下的条件</p>
+<ul>
+<li>足够的省钱🤣</li>
+<li>便于之后的功能扩展</li>
+<li>程序部署方便</li>
+<li>考虑系统的安全性</li>
+</ul>
+<p>项目开发的选择如下</p>
+<ul>
+<li>在云厂商购买免费的<code>单域名</code>证书. </li>
+<li>功能托管将采用的云厂商云服务器.</li>
+<li>因为要省钱, 所以网关采用服务器内搭建Nginx而非负载均衡器, 等之后再换吧</li>
+<li>采用云厂商的日志服务</li>
+<li>代码托管采用<code>github</code>的私有仓库</li>
+<li>软件库采用云厂商私有镜像仓库</li>
+<li>暂不考虑前端设计</li>
+<li>服务器安全性</li>
+</ul>
+<h3 id="购买域名"><a href="#购买域名" class="headerlink" title="购买域名"></a>购买域名</h3><p>在某云厂商购买域名<code>utils.pro</code>, 并为该域名免费的单域名证书.</p>
+<p>之后会考虑let’s encrypt提供的免费泛域名证书</p>
+<h3 id="创建服务器"><a href="#创建服务器" class="headerlink" title="创建服务器"></a>创建服务器</h3><p>在某云厂商购买了服务器， 配置公网IP, 并配置域名解析. </p>
+<p>从安全角度: 创建由云厂商托管的服务器登录密钥.</p>
+<p>从安全角度: 配置服务器安全组, 外网入网端口仅包含22,80,443</p>
+<h3 id="配置服务器内容"><a href="#配置服务器内容" class="headerlink" title="配置服务器内容"></a>配置服务器内容</h3><p>选择操作系统<code>centos-8</code></p>
+<p>安装软件<code>nginx</code>, <code>docker</code></p>
+<h3 id="创建项目"><a href="#创建项目" class="headerlink" title="创建项目"></a>创建项目</h3><p>在<code>github</code>上创建私有仓库, 用来存放功能设计文档与代码实现.</p>
+<p>后台编程语言选择<code>go</code></p>
+<p>运营脚本语言选择<code>python</code></p>
+<p>因为之前自己买过<code>intelij</code>家的全家桶, 所以IDE选择<code>goland</code></p>
+<p>业务指标与性能指标采集选择<code>prometheus</code></p>
+<p><code>prometheus</code>指标展示采用<code>grafana</code></p>
+<h3 id="配置镜像仓库"><a href="#配置镜像仓库" class="headerlink" title="配置镜像仓库"></a>配置镜像仓库</h3><p>再某云厂商创建私有镜像仓库, 将代码源选择为<code>github</code>. 选择代码提交后满足特定TAG即可自动构建.</p>
+<p>镜像构建后通过触发器通知云服务器.</p>
+<p>编写python脚本用以监听特定端口, 当镜像仓库通知服务器镜像变更后, 服务器即可更新docker容器.</p>
 
-<h3 id="生成单域名证书"><a href="#生成单域名证书" class="headerlink" title="生成单域名证书"></a>生成单域名证书</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 生成单域名证书</span></span><br><span class="line">domain=<span class="variable">$1</span></span><br><span class="line"><span class="comment"># 创建文件夹</span></span><br><span class="line">mkdir -p <span class="variable">$domain</span></span><br><span class="line"><span class="comment"># 生成秘钥</span></span><br><span class="line">openssl genrsa -out <span class="variable">$domain</span>/<span class="variable">$domain</span>.key</span><br><span class="line"><span class="comment"># 生成请求</span></span><br><span class="line">openssl req -new -key <span class="variable">$domain</span>/<span class="variable">$domain</span>.key -out <span class="variable">$domain</span>/<span class="variable">$domain</span>.csr -subj <span class="string">"/C=CN/ST=XXX/L=XXX/O=XXX/OU=XXX/CN=<span class="variable">$domain</span>/emailAddress=XXX@XXX.com"</span> -addext <span class="string">"subjectAltName=DNS:<span class="variable">$domain</span>"</span></span><br><span class="line"><span class="comment"># 生成证书</span></span><br><span class="line">openssl x509 -req -<span class="keyword">in</span> <span class="variable">$domain</span>/<span class="variable">$domain</span>.csr -CA ../rootca/root.cer -CAkey ../rootca/root.key -CAcreateserial -out <span class="variable">$domain</span>/<span class="variable">$domain</span>.crt -days 730 -extfile &lt;(<span class="built_in">printf</span> <span class="string">"subjectKeyIdentifier=hash\nauthorityKeyIdentifier=keyid,issuer\nbasicConstraints=CA:FALSE\nkeyUsage=digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment\nextendedKeyUsage=serverAuth,OCSPSigning\nsubjectAltName=DNS:<span class="variable">$domain</span>"</span>)</span><br></pre></td></tr></table></figure>
-
-<h3 id="生成泛域名证书"><a href="#生成泛域名证书" class="headerlink" title="生成泛域名证书"></a>生成泛域名证书</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 生成泛域名证书</span></span><br><span class="line">domain=<span class="variable">$1</span></span><br><span class="line"><span class="comment"># 创建文件夹</span></span><br><span class="line">mkdir -p <span class="variable">$domain</span></span><br><span class="line"><span class="comment"># 生成秘钥</span></span><br><span class="line">openssl genrsa -out <span class="variable">$domain</span>/<span class="variable">$domain</span>.key</span><br><span class="line"><span class="comment"># 生成请求</span></span><br><span class="line">openssl req -new -key <span class="variable">$domain</span>/<span class="variable">$domain</span>.key -out <span class="variable">$domain</span>/<span class="variable">$domain</span>.csr -subj <span class="string">"/C=CN/ST=XXX/L=XXX/O=XXX/OU=XXX/CN=<span class="variable">$domain</span>/emailAddress=XXX@XXX.com"</span> -addext <span class="string">"subjectAltName=DNS:*.<span class="variable">$domain</span>,DNS:<span class="variable">$domain</span>"</span></span><br><span class="line"><span class="comment"># 生成证书</span></span><br><span class="line">openssl x509 -req -<span class="keyword">in</span> <span class="variable">$domain</span>/<span class="variable">$domain</span>.csr -CA ../rootca/root.cer -CAkey ../rootca/root.key -CAcreateserial -out <span class="variable">$domain</span>/<span class="variable">$domain</span>.crt -days 730 -extfile &lt;(<span class="built_in">printf</span> <span class="string">"subjectKeyIdentifier=hash\nauthorityKeyIdentifier=keyid,issuer\nbasicConstraints=CA:FALSE\nkeyUsage=digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment\nextendedKeyUsage=serverAuth,OCSPSigning\nsubjectAltName=DNS:*.<span class="variable">$domain</span>,DNS:<span class="variable">$domain</span>"</span>)</span><br></pre></td></tr></table></figure>
     </div>
 
     
@@ -288,25 +328,26 @@
 
       <footer class="post-footer">
           <div class="post-tags">
+              <a href="/tags/website/" rel="tag"># website</a>
+              <a href="/tags/ECS/" rel="tag"># ECS</a>
+              <a href="/tags/docker/" rel="tag"># docker</a>
+              <a href="/tags/github/" rel="tag"># github</a>
+              <a href="/tags/%E9%95%9C%E5%83%8F%E4%BB%93%E5%BA%93/" rel="tag"># 镜像仓库</a>
               <a href="/tags/%E8%AF%81%E4%B9%A6/" rel="tag"># 证书</a>
-              <a href="/tags/certificate/" rel="tag"># certificate</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-next post-nav-item">
-                <a href="/2020/06/01/golang%E7%9A%84%E4%B8%80%E4%B8%AA%E8%87%AA%E9%87%8D%E5%86%99%E7%A8%8B%E5%BA%8F/" rel="next" title="golang的一个自重写程序">
-                  <i class="fa fa-chevron-left"></i> golang的一个自重写程序
+                <a href="/2020/07/01/%E6%90%AD%E5%BB%BAetcd%E9%9B%86%E7%BE%A4/" rel="next" title="单机搭建etcd集群">
+                  <i class="fa fa-chevron-left"></i> 单机搭建etcd集群
                 </a>
             </div>
 
             <span class="post-nav-divider"></span>
 
             <div class="post-nav-prev post-nav-item">
-                <a href="/2020/07/01/%E6%90%AD%E5%BB%BAetcd%E9%9B%86%E7%BE%A4/" rel="prev" title="单机搭建etcd集群">
-                  单机搭建etcd集群 <i class="fa fa-chevron-right"></i>
-                </a>
             </div>
           </div>
       </footer>
@@ -345,7 +386,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#生成根证书"><span class="nav-number">1.</span> <span class="nav-text">生成根证书</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#生成单域名证书"><span class="nav-number">2.</span> <span class="nav-text">生成单域名证书</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#生成泛域名证书"><span class="nav-number">3.</span> <span class="nav-text">生成泛域名证书</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#功能需求"><span class="nav-number">1.</span> <span class="nav-text">功能需求</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#需求1"><span class="nav-number">1.1.</span> <span class="nav-text">需求1</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#需求2"><span class="nav-number">1.2.</span> <span class="nav-text">需求2</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#需求3"><span class="nav-number">1.3.</span> <span class="nav-text">需求3</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实现的思路"><span class="nav-number">2.</span> <span class="nav-text">实现的思路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#购买域名"><span class="nav-number">3.</span> <span class="nav-text">购买域名</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建服务器"><span class="nav-number">4.</span> <span class="nav-text">创建服务器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置服务器内容"><span class="nav-number">5.</span> <span class="nav-text">配置服务器内容</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建项目"><span class="nav-number">6.</span> <span class="nav-text">创建项目</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置镜像仓库"><span class="nav-number">7.</span> <span class="nav-text">配置镜像仓库</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
