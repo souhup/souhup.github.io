@@ -9,6 +9,7 @@ tags:
   - docker
   - mysql
   - grafana
+  - prometheus
 ---
 
 计划之后将centos-8作为平时的开发环境，记录一下安装过程。
@@ -118,4 +119,26 @@ docker run \
     --volume /etc/grafana:/etc/grafana \
     --user root \
     grafana/grafana
+```
+
+### 安装docker版prometheus
+
+```bash
+# 通过docker安装prometheus
+docker run \
+    --name=prometheus \
+    -d \
+    --user root \
+    prom/prometheus
+docker cp prometheus:/etc/prometheus/prometheus.yml /app/prometheus/config
+docker stop prometheus
+docker rm prometheus
+docker run \
+    --name=prometheus \
+    --restart=always \
+    -d -p 9090:9090 \
+    --volume /app/prometheus/config:/etc/prometheus \
+    --volume /app/prometheus/data:/prometheus \
+    --user root \
+    prom/prometheus
 ```
