@@ -766,7 +766,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-06-30 23:59:58" itemprop="dateModified" datetime="2020-06-30T23:59:58+08:00">2020-06-30</time>
+                <time title="修改时间：2020-07-09 00:42:38" itemprop="dateModified" datetime="2020-07-09T00:42:38+08:00">2020-07-09</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -786,7 +786,7 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>1.6k</span>
+              <span>2k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -822,6 +822,9 @@
 <h3 id="安装docker版mysql"><a href="#安装docker版mysql" class="headerlink" title="安装docker版mysql"></a>安装docker版mysql</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 通过docker安装mysql-8</span></span><br><span class="line">docker run \</span><br><span class="line">    --name mysql \</span><br><span class="line">    -d \</span><br><span class="line">    -e MYSQL_ROOT_PASSWORD=123456 \</span><br><span class="line">    mysql</span><br><span class="line">docker cp mysql:/var/lib/mysql /var/lib/mysql</span><br><span class="line">docker cp mysql:/etc/mysql /etc/mysql</span><br><span class="line">docker stop mysql</span><br><span class="line">docker rm mysql</span><br><span class="line">docker run \</span><br><span class="line">    --name mysql \</span><br><span class="line">    --restart=always \</span><br><span class="line">    -d \</span><br><span class="line">    -p 3306:3306 \</span><br><span class="line">    --user root \</span><br><span class="line">    -v /etc/mysql:/etc/mysql \</span><br><span class="line">    -v /var/lib/mysql:/var/lib/mysql \</span><br><span class="line">    mysql</span><br></pre></td></tr></table></figure>
 
 <h3 id="安装docker版grafana"><a href="#安装docker版grafana" class="headerlink" title="安装docker版grafana"></a>安装docker版grafana</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 通过docker安装grafana</span></span><br><span class="line">docker run \</span><br><span class="line">    --name=grafana \</span><br><span class="line">    -d \</span><br><span class="line">    --user root \</span><br><span class="line">    grafana/grafana</span><br><span class="line">docker cp grafana:/etc/grafana /etc/grafana</span><br><span class="line">docker stop grafana</span><br><span class="line">docker rm grafana</span><br><span class="line">docker run \</span><br><span class="line">    --name=grafana \</span><br><span class="line">    --restart=always \</span><br><span class="line">    -d -p 3000:3000 \</span><br><span class="line">    --volume /var/lib/grafana:/var/lib/grafana \</span><br><span class="line">    --volume /etc/grafana:/etc/grafana \</span><br><span class="line">    --user root \</span><br><span class="line">    grafana/grafana</span><br></pre></td></tr></table></figure>
+
+<h3 id="安装docker版prometheus"><a href="#安装docker版prometheus" class="headerlink" title="安装docker版prometheus"></a>安装docker版prometheus</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 通过docker安装prometheus</span></span><br><span class="line">docker run \</span><br><span class="line">    --name=prometheus \</span><br><span class="line">    -d \</span><br><span class="line">    --user root \</span><br><span class="line">    prom/prometheus</span><br><span class="line">docker cp prometheus:/etc/prometheus/prometheus.yml /app/prometheus/config</span><br><span class="line">docker stop prometheus</span><br><span class="line">docker rm prometheus</span><br><span class="line">docker run \</span><br><span class="line">    --name=prometheus \</span><br><span class="line">    --restart=always \</span><br><span class="line">    -d -p 9090:9090 \</span><br><span class="line">    --volume /app/prometheus/config:/etc/prometheus \</span><br><span class="line">    --volume /app/prometheus/data:/prometheus \</span><br><span class="line">    --user root \</span><br><span class="line">    prom/prometheus</span><br></pre></td></tr></table></figure>
+
       
     </div>
 
@@ -1035,7 +1038,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-count">20</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1074,7 +1077,7 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">21 分钟</span>
+    <span title="站点阅读时长">22 分钟</span>
 </div>
 
         
