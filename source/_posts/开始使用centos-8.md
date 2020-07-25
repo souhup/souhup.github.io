@@ -106,19 +106,24 @@ docker run \
 docker run \
     --name=grafana \
     -d \
-    --user root \
     grafana/grafana
-docker cp grafana:/etc/grafana /etc/grafana
+
+mkdir -p /app/grafana
+docker cp grafana:/etc/grafana /app/grafana/config
+docker cp grafana:/var/lib/grafana /app/grafana/data
+
 docker stop grafana
 docker rm grafana
+
 docker run \
     --name=grafana \
     --restart=always \
     -d -p 3000:3000 \
-    --volume /var/lib/grafana:/var/lib/grafana \
-    --volume /etc/grafana:/etc/grafana \
+    --volume /app/grafana/config:/etc/grafana \
+    --volume /app/grafana/data:/var/lib/grafana \
     --user root \
     grafana/grafana
+
 ```
 
 ### 安装docker版prometheus
@@ -128,16 +133,20 @@ docker run \
 docker run \
     --name=prometheus \
     -d \
-    --user root \
     prom/prometheus
+
+mkdir -p /app/prometheus/config
 docker cp prometheus:/etc/prometheus/prometheus.yml /app/prometheus/config
+docker cp prometheus:/prometheus /app/prometheus/data
+
 docker stop prometheus
 docker rm prometheus
+
 docker run \
     --name=prometheus \
     --restart=always \
     -d -p 9090:9090 \
-    --volume /app/prometheus/config:/etc/prometheus \
+    --volume /app/prometheus/config/prometheus.yml:/etc/prometheus/prometheus.yml \
     --volume /app/prometheus/data:/prometheus \
     --user root \
     prom/prometheus
