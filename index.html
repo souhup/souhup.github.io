@@ -230,10 +230,16 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2020-07-05 13:48:00 / 修改时间：13:48:49" itemprop="dateCreated datePublished" datetime="2020-07-05T13:48:00+08:00">2020-07-05</time>
+              <time title="创建时间：2020-07-05 13:48:00" itemprop="dateCreated datePublished" datetime="2020-07-05T13:48:00+08:00">2020-07-05</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-07-09 01:10:06" itemprop="dateModified" datetime="2020-07-09T01:10:06+08:00">2020-07-09</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="fa fa-folder-o"></i>
@@ -273,11 +279,11 @@
       
           <p>由于想要搭建一个可以提供各类基础功能的网站, 所以便立刻行动起来了😆.</p>
 <h3 id="功能需求"><a href="#功能需求" class="headerlink" title="功能需求"></a>功能需求</h3><h4 id="需求1"><a href="#需求1" class="headerlink" title="需求1"></a>需求1</h4><p>提供一个查询自己公网IP的功能, </p>
-<p>通过<code>GET</code>访问<code>http(s)://api.utils.pro/v1/myip</code>, 获取自己的公网IP与其它信息.</p>
-<p>获取到的信息将以简单的文本形式进行展示, <code>IP:xxx.xxx.xxx.xxx, 国家(地区): xxxx, 省份: xxx, 城市: xxx, 运营商: xxx, 时区: xxx</code></p>
+<p>通过<code>GET</code>访问<code>http(s)://api.utils.pro/myip</code>, 获取自己的公网IP与其它信息.</p>
+<p>获取到的信息将以简单的文本形式进行展示, <code>IP:xxx.xxx.xxx.xxx, 国家(地区): xxxx, 省份: xxx, 城市: xxx, 运营商: xxx</code></p>
 <h4 id="需求2"><a href="#需求2" class="headerlink" title="需求2"></a>需求2</h4><p>提供一个查询任意IP的功能</p>
-<p>通过<code>GET</code>访问<code>http(s)://api.utils.pro/v1/query-ip?ip=xxx.xxx.xxx.xxx</code> 获取自己的公网IP与其它信息.</p>
-<p>获取到的信息将以简单的文本形式进行展示, <code>IP:xxx.xxx.xxx.xxx, 国家(地区): xxxx, 省份: xxx, 城市: xxx, 运营商: xxx, 时区: xxx</code></p>
+<p>通过<code>GET</code>访问<code>http(s)://api.utils.pro/query-ip?ip=xxx.xxx.xxx.xxx</code> 获取自己的公网IP与其它信息.</p>
+<p>获取到的信息将以简单的文本形式进行展示, <code>IP:xxx.xxx.xxx.xxx, 国家(地区): xxxx, 省份: xxx, 城市: xxx, 运营商: xxx</code></p>
 <h4 id="需求3"><a href="#需求3" class="headerlink" title="需求3"></a>需求3</h4><p>通过<code>curl</code>等HTTP客户端来进行文件互传.</p>
 <p>发送方或接收方通过<code>GET</code>调用<code>http(s)://api.utils.pro/v1/data-transfer-code</code>获取一个随机密码.</p>
 <p>通过该随机密码, 发送方通过<code>PUT</code>调用<code>http(s)://api.utils.pro/v1/data-transfer?code=xxx</code>，</p>
@@ -766,7 +772,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-07-09 00:42:38" itemprop="dateModified" datetime="2020-07-09T00:42:38+08:00">2020-07-09</time>
+                <time title="修改时间：2020-07-25 18:33:16" itemprop="dateModified" datetime="2020-07-25T18:33:16+08:00">2020-07-25</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -786,14 +792,14 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>2k</span>
+              <span>2.2k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="fa fa-clock-o"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
+              <span>4 分钟</span>
             </span>
 
         </div>
@@ -821,9 +827,9 @@
 
 <h3 id="安装docker版mysql"><a href="#安装docker版mysql" class="headerlink" title="安装docker版mysql"></a>安装docker版mysql</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 通过docker安装mysql-8</span></span><br><span class="line">docker run \</span><br><span class="line">    --name mysql \</span><br><span class="line">    -d \</span><br><span class="line">    -e MYSQL_ROOT_PASSWORD=123456 \</span><br><span class="line">    mysql</span><br><span class="line">docker cp mysql:/var/lib/mysql /var/lib/mysql</span><br><span class="line">docker cp mysql:/etc/mysql /etc/mysql</span><br><span class="line">docker stop mysql</span><br><span class="line">docker rm mysql</span><br><span class="line">docker run \</span><br><span class="line">    --name mysql \</span><br><span class="line">    --restart=always \</span><br><span class="line">    -d \</span><br><span class="line">    -p 3306:3306 \</span><br><span class="line">    --user root \</span><br><span class="line">    -v /etc/mysql:/etc/mysql \</span><br><span class="line">    -v /var/lib/mysql:/var/lib/mysql \</span><br><span class="line">    mysql</span><br></pre></td></tr></table></figure>
 
-<h3 id="安装docker版grafana"><a href="#安装docker版grafana" class="headerlink" title="安装docker版grafana"></a>安装docker版grafana</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 通过docker安装grafana</span></span><br><span class="line">docker run \</span><br><span class="line">    --name=grafana \</span><br><span class="line">    -d \</span><br><span class="line">    --user root \</span><br><span class="line">    grafana/grafana</span><br><span class="line">docker cp grafana:/etc/grafana /etc/grafana</span><br><span class="line">docker stop grafana</span><br><span class="line">docker rm grafana</span><br><span class="line">docker run \</span><br><span class="line">    --name=grafana \</span><br><span class="line">    --restart=always \</span><br><span class="line">    -d -p 3000:3000 \</span><br><span class="line">    --volume /var/lib/grafana:/var/lib/grafana \</span><br><span class="line">    --volume /etc/grafana:/etc/grafana \</span><br><span class="line">    --user root \</span><br><span class="line">    grafana/grafana</span><br></pre></td></tr></table></figure>
+<h3 id="安装docker版grafana"><a href="#安装docker版grafana" class="headerlink" title="安装docker版grafana"></a>安装docker版grafana</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 通过docker安装grafana</span></span><br><span class="line">docker run \</span><br><span class="line">    --name=grafana \</span><br><span class="line">    -d \</span><br><span class="line">    grafana/grafana</span><br><span class="line"></span><br><span class="line">mkdir -p /app/grafana</span><br><span class="line">docker cp grafana:/etc/grafana /app/grafana/config</span><br><span class="line">docker cp grafana:/var/lib/grafana /app/grafana/data</span><br><span class="line"></span><br><span class="line">docker stop grafana</span><br><span class="line">docker rm grafana</span><br><span class="line"></span><br><span class="line">docker run \</span><br><span class="line">    --name=grafana \</span><br><span class="line">    --restart=always \</span><br><span class="line">    -d -p 3000:3000 \</span><br><span class="line">    --volume /app/grafana/config:/etc/grafana \</span><br><span class="line">    --volume /app/grafana/data:/var/lib/grafana \</span><br><span class="line">    --user root \</span><br><span class="line">    grafana/grafana</span><br></pre></td></tr></table></figure>
 
-<h3 id="安装docker版prometheus"><a href="#安装docker版prometheus" class="headerlink" title="安装docker版prometheus"></a>安装docker版prometheus</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 通过docker安装prometheus</span></span><br><span class="line">docker run \</span><br><span class="line">    --name=prometheus \</span><br><span class="line">    -d \</span><br><span class="line">    --user root \</span><br><span class="line">    prom/prometheus</span><br><span class="line">docker cp prometheus:/etc/prometheus/prometheus.yml /app/prometheus/config</span><br><span class="line">docker stop prometheus</span><br><span class="line">docker rm prometheus</span><br><span class="line">docker run \</span><br><span class="line">    --name=prometheus \</span><br><span class="line">    --restart=always \</span><br><span class="line">    -d -p 9090:9090 \</span><br><span class="line">    --volume /app/prometheus/config:/etc/prometheus \</span><br><span class="line">    --volume /app/prometheus/data:/prometheus \</span><br><span class="line">    --user root \</span><br><span class="line">    prom/prometheus</span><br></pre></td></tr></table></figure>
+<h3 id="安装docker版prometheus"><a href="#安装docker版prometheus" class="headerlink" title="安装docker版prometheus"></a>安装docker版prometheus</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 通过docker安装prometheus</span></span><br><span class="line">docker run \</span><br><span class="line">    --name=prometheus \</span><br><span class="line">    -d \</span><br><span class="line">    prom/prometheus</span><br><span class="line"></span><br><span class="line">mkdir -p /app/prometheus/config</span><br><span class="line">docker cp prometheus:/etc/prometheus/prometheus.yml /app/prometheus/config</span><br><span class="line">docker cp prometheus:/prometheus /app/prometheus/data</span><br><span class="line"></span><br><span class="line">docker stop prometheus</span><br><span class="line">docker rm prometheus</span><br><span class="line"></span><br><span class="line">docker run \</span><br><span class="line">    --name=prometheus \</span><br><span class="line">    --restart=always \</span><br><span class="line">    -d -p 9090:9090 \</span><br><span class="line">    --volume /app/prometheus/config/prometheus.yml:/etc/prometheus/prometheus.yml \</span><br><span class="line">    --volume /app/prometheus/data:/prometheus \</span><br><span class="line">    --user root \</span><br><span class="line">    prom/prometheus</span><br></pre></td></tr></table></figure>
 
       
     </div>
