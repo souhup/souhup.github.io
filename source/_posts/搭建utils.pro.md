@@ -20,17 +20,17 @@ tags:
 
 提供一个查询自己公网IP的功能, 
 
-通过`GET`访问`http(s)://api.utils.pro/v1/myip`, 获取自己的公网IP与其它信息.
+通过`GET`访问`http(s)://api.utils.pro/myip`, 获取自己的公网IP与其它信息.
 
-获取到的信息将以简单的文本形式进行展示, `IP:xxx.xxx.xxx.xxx, 国家(地区): xxxx, 省份: xxx, 城市: xxx, 运营商: xxx, 时区: xxx `
+获取到的信息将以简单的文本形式进行展示, `IP:xxx.xxx.xxx.xxx, 国家(地区): xxxx, 省份: xxx, 城市: xxx, 运营商: xxx`
 
 #### 需求2
 
 提供一个查询任意IP的功能
 
-通过`GET`访问`http(s)://api.utils.pro/v1/query-ip?ip=xxx.xxx.xxx.xxx` 获取自己的公网IP与其它信息.
+通过`GET`访问`http(s)://api.utils.pro/query-ip?ip=xxx.xxx.xxx.xxx` 获取自己的公网IP与其它信息.
 
-获取到的信息将以简单的文本形式进行展示, `IP:xxx.xxx.xxx.xxx, 国家(地区): xxxx, 省份: xxx, 城市: xxx, 运营商: xxx, 时区: xxx `
+获取到的信息将以简单的文本形式进行展示, `IP:xxx.xxx.xxx.xxx, 国家(地区): xxxx, 省份: xxx, 城市: xxx, 运营商: xxx`
 
 #### 需求3
 
