@@ -50,18 +50,18 @@
   };
 </script>
 
-  <meta name="description" content="golang的一个自重写程序今日在看书时，突然想用golang尝试一下自重写.  所谓自重写，就是程序打印的结果为程序源代码本身. 听起来似乎不难, 只要用文件系统读取源代码文件并打印即可， 不过这样就完全没有挑战了不是吗😂 我自己实现的版本如下, 虽然不优雅，但至少起到了作用. 123456789101112131415package mainimport (	&quot;fmt&quot;	&quot;strings&quot;)">
-<meta name="keywords" content="golang,self-reproducing programs">
+  <meta name="description" content="计算整数在二进制形式下1的个数给定一个无符号32位整数, 计算它在二进制形式下1的个数 方法1循环地检查每一位是否为1, 并计数. 这个是最容易想到的方式， 但是需要循环32次, 性能开销过大 1234567891011&#x2F;&#x2F; 计算无符号32位整数二进制形式下1的数量func CountBits1(num uint32) (count int) &amp;#123;	&#x2F;&#x2F; 依次检查每一位是否为1, 并计数">
+<meta name="keywords" content="算法,位运算,go,二进制">
 <meta property="og:type" content="article">
-<meta property="og:title" content="golang的一个自重写程序">
-<meta property="og:url" content="https:&#x2F;&#x2F;souhup.top&#x2F;2020&#x2F;06&#x2F;01&#x2F;golang%E7%9A%84%E4%B8%80%E4%B8%AA%E8%87%AA%E9%87%8D%E5%86%99%E7%A8%8B%E5%BA%8F&#x2F;index.html">
+<meta property="og:title" content="计算整数在二进制形式下1的个数">
+<meta property="og:url" content="https:&#x2F;&#x2F;souhup.top&#x2F;2020&#x2F;07&#x2F;26&#x2F;%E8%AE%A1%E7%AE%97%E6%95%B4%E6%95%B0%E5%9C%A8%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%BD%A2%E5%BC%8F%E4%B8%8B1%E7%9A%84%E4%B8%AA%E6%95%B0&#x2F;index.html">
 <meta property="og:site_name" content="美好的每一天">
-<meta property="og:description" content="golang的一个自重写程序今日在看书时，突然想用golang尝试一下自重写.  所谓自重写，就是程序打印的结果为程序源代码本身. 听起来似乎不难, 只要用文件系统读取源代码文件并打印即可， 不过这样就完全没有挑战了不是吗😂 我自己实现的版本如下, 虽然不优雅，但至少起到了作用. 123456789101112131415package mainimport (	&quot;fmt&quot;	&quot;strings&quot;)">
+<meta property="og:description" content="计算整数在二进制形式下1的个数给定一个无符号32位整数, 计算它在二进制形式下1的个数 方法1循环地检查每一位是否为1, 并计数. 这个是最容易想到的方式， 但是需要循环32次, 性能开销过大 1234567891011&#x2F;&#x2F; 计算无符号32位整数二进制形式下1的数量func CountBits1(num uint32) (count int) &amp;#123;	&#x2F;&#x2F; 依次检查每一位是否为1, 并计数">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-06-30T15:59:58.269Z">
+<meta property="og:updated_time" content="2020-07-26T10:36:50.118Z">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="https://souhup.top/2020/06/01/golang%E7%9A%84%E4%B8%80%E4%B8%AA%E8%87%AA%E9%87%8D%E5%86%99%E7%A8%8B%E5%BA%8F/">
+<link rel="canonical" href="https://souhup.top/2020/07/26/%E8%AE%A1%E7%AE%97%E6%95%B4%E6%95%B0%E5%9C%A8%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%BD%A2%E5%BC%8F%E4%B8%8B1%E7%9A%84%E4%B8%AA%E6%95%B0/">
 
 
 <script id="page-configurations">
@@ -75,7 +75,7 @@
   };
 </script>
 
-  <title>golang的一个自重写程序 | 美好的每一天</title>
+  <title>计算整数在二进制形式下1的个数 | 美好的每一天</title>
   
 
 
@@ -211,7 +211,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://souhup.top/2020/06/01/golang%E7%9A%84%E4%B8%80%E4%B8%AA%E8%87%AA%E9%87%8D%E5%86%99%E7%A8%8B%E5%BA%8F/">
+    <link itemprop="mainEntityOfPage" href="https://souhup.top/2020/07/26/%E8%AE%A1%E7%AE%97%E6%95%B4%E6%95%B0%E5%9C%A8%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%BD%A2%E5%BC%8F%E4%B8%8B1%E7%9A%84%E4%B8%AA%E6%95%B0/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -224,7 +224,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          golang的一个自重写程序
+          计算整数在二进制形式下1的个数
         </h1>
 
         <div class="post-meta">
@@ -233,24 +233,18 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2020-06-01 23:49:00" itemprop="dateCreated datePublished" datetime="2020-06-01T23:49:00+08:00">2020-06-01</time>
+              <time title="创建时间：2020-07-26 18:35:00 / 修改时间：18:36:50" itemprop="dateCreated datePublished" datetime="2020-07-26T18:35:00+08:00">2020-07-26</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-06-30 23:59:58" itemprop="dateModified" datetime="2020-06-30T23:59:58+08:00">2020-06-30</time>
-              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="fa fa-folder-o"></i>
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/tutorial/" itemprop="url" rel="index">
-                    <span itemprop="name">tutorial</span>
+                  <a href="/categories/algorithm/" itemprop="url" rel="index">
+                    <span itemprop="name">algorithm</span>
                   </a>
                 </span>
             </span>
@@ -261,7 +255,7 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>1.1k</span>
+              <span>1.4k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -280,23 +274,24 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="golang的一个自重写程序"><a href="#golang的一个自重写程序" class="headerlink" title="golang的一个自重写程序"></a>golang的一个自重写程序</h2><p>今日在看书时，突然想用golang尝试一下<strong>自重写</strong>. </p>
-<p>所谓自重写，就是程序打印的结果为程序源代码本身. 听起来似乎不难, 只要用文件系统读取源代码文件并打印即可， 不过这样就完全没有挑战了不是吗😂</p>
-<p>我自己实现的版本如下, 虽然不优雅，但至少起到了作用.</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">	<span class="string">"strings"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	code := <span class="string">"package main\n\nimport (\n    \"fmt\"\n    \"strings\"\n)\n\nfunc main() &#123;\n    code := %s\n    tmp := strings.Replace(code, \"\\\\\", \"\\\\\\\\\", -1)\n    tmp = strings.Replace(tmp, \"\\n\", \"\\\\n\", -1)\n    tmp = strings.Replace(tmp, \"\\\"\", \"\\\\\\\"\", -1)\n    code = fmt.Sprintf(code, fmt.Sprintf(\"\\\"%%s\\\"\", tmp))\n    println(code)\n&#125;"</span></span><br><span class="line">	tmp := strings.Replace(code, <span class="string">"\\"</span>, <span class="string">"\\\\"</span>, <span class="number">-1</span>)</span><br><span class="line">	tmp = strings.Replace(tmp, <span class="string">"\n"</span>, <span class="string">"\\n"</span>, <span class="number">-1</span>)</span><br><span class="line">	tmp = strings.Replace(tmp, <span class="string">"\""</span>, <span class="string">"\\\""</span>, <span class="number">-1</span>)</span><br><span class="line">	code = fmt.Sprintf(code, fmt.Sprintf(<span class="string">"\"%s\""</span>, tmp))</span><br><span class="line">	<span class="built_in">println</span>(code)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        <h2 id="计算整数在二进制形式下1的个数"><a href="#计算整数在二进制形式下1的个数" class="headerlink" title="计算整数在二进制形式下1的个数"></a>计算整数在二进制形式下1的个数</h2><p>给定一个无符号32位整数, 计算它在二进制形式下1的个数</p>
+<h3 id="方法1"><a href="#方法1" class="headerlink" title="方法1"></a>方法1</h3><p>循环地检查每一位是否为1, 并计数.</p>
+<p>这个是最容易想到的方式， 但是需要循环32次, 性能开销过大</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 计算无符号32位整数二进制形式下1的数量</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">CountBits1</span><span class="params">(num <span class="keyword">uint32</span>)</span> <span class="params">(count <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">	<span class="comment">// 依次检查每一位是否为1, 并计数</span></span><br><span class="line">	<span class="keyword">for</span> num &gt; <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">if</span> num&amp;<span class="number">0</span>b1 == <span class="number">1</span> &#123;</span><br><span class="line">			count++</span><br><span class="line">		&#125;</span><br><span class="line">		num &gt;&gt;= <span class="number">1</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
+<h3 id="方法2"><a href="#方法2" class="headerlink" title="方法2"></a>方法2</h3><p>从低位开始, 循环地清除1, 直到数字为0.</p>
+<p>对于那些1的个数少的数字，可以大大降低循环的次数</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 计算无符号32位整数二进制形式下1的数量</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">CountBits2</span><span class="params">(num <span class="keyword">uint32</span>)</span> <span class="params">(count <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">	<span class="comment">// 循环地清除低位的1, 直到数字为0, 1的个数与循环次数一致</span></span><br><span class="line">	<span class="keyword">for</span> num &gt; <span class="number">0</span> &#123;</span><br><span class="line">		num &amp;= num - <span class="number">1</span></span><br><span class="line">		count++</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
+<h3 id="方法3"><a href="#方法3" class="headerlink" title="方法3"></a>方法3</h3><p>类似于归并排序的思想, 我们先将相邻的两个比特位相加, 然后将相邻的两个结果相加, 不断重复将相邻的结果相加，直至最后只剩下一个结果.</p>
+<p>比如对于二进制数<code>0b10001111</code>, 如下图，可以计算出1的个数为5</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">graph BT;</span><br><span class="line">1(101)</span><br><span class="line">1--&gt;2(1)</span><br><span class="line">1--&gt;3(100)</span><br><span class="line">2--&gt;4(1)</span><br><span class="line">2--&gt;5(0)</span><br><span class="line">3--&gt;6(10)</span><br><span class="line">3--&gt;7(10)</span><br><span class="line">4--&gt;8(1)</span><br><span class="line">4--&gt;9(0)</span><br><span class="line">5--&gt;10(0)</span><br><span class="line">5--&gt;11(0)</span><br><span class="line">6--&gt;12(1)</span><br><span class="line">6--&gt;13(1)</span><br><span class="line">7--&gt;14(1)</span><br><span class="line">7--&gt;15(1)</span><br></pre></td></tr></table></figure>
 
-<p>广为流传的有<a href="https://research.swtch.com/zip" target="_blank" rel="noopener">rsc</a>提供的实现, 确实更为精简</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* Go quine */</span></span><br><span class="line"><span class="keyword">package</span> main</span><br><span class="line"><span class="keyword">import</span> <span class="string">"fmt"</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    fmt.Printf(<span class="string">"%s%c%s%c\n"</span>, q, <span class="number">0x60</span>, q, <span class="number">0x60</span>)</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> q = <span class="string">`/* Go quine */</span></span><br><span class="line"><span class="string">package main</span></span><br><span class="line"><span class="string">import "fmt"</span></span><br><span class="line"><span class="string">func main() &#123;</span></span><br><span class="line"><span class="string">    fmt.Printf("%s%c%s%c\n", q, 0x60, q, 0x60)</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string">var q = `</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 计算无符号32位整数二进制形式下1的数量</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">CountBits3</span><span class="params">(num <span class="keyword">uint32</span>)</span> <span class="params">(count <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">	num = num&amp;<span class="number">0x55555555</span> + num&gt;&gt;<span class="number">1</span>&amp;<span class="number">0x55555555</span></span><br><span class="line">	num = num&amp;<span class="number">0x33333333</span> + num&gt;&gt;<span class="number">2</span>&amp;<span class="number">0x33333333</span></span><br><span class="line">	num = num&amp;<span class="number">0x0f0f0f0f</span> + num&gt;&gt;<span class="number">4</span>&amp;<span class="number">0x0f0f0f0f</span></span><br><span class="line">	num = num&amp;<span class="number">0x00ff00ff</span> + num&gt;&gt;<span class="number">8</span>&amp;<span class="number">0x00ff00ff</span></span><br><span class="line">	num = num&amp;<span class="number">0x0000ffff</span> + num&gt;&gt;<span class="number">16</span>&amp;<span class="number">0x0000ffff</span></span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">int</span>(num)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-
-
-<p>而<a href="http://groups.google.com/group/golang-nuts" target="_blank" rel="noopener">golang-nuts</a>提供了更短的代码, 思路和rsc的类似，不过没有经过<code>go fmt</code>，写成一行的话看起来也太奇怪了.</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main;<span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>&#123;<span class="built_in">print</span>(c+<span class="string">"\x60"</span>+c+<span class="string">"\x60"</span>)&#125;;<span class="keyword">var</span> c=<span class="string">`package main;func main()&#123;print(c+"\x60"+c+"\x60")&#125;;var c=`</span></span><br></pre></td></tr></table></figure>
-
-
-
+<h3 id="性能测试"><a href="#性能测试" class="headerlink" title="性能测试"></a>性能测试</h3><p>我们取固定的数<code>0b11001111110011111100111111001111</code>进行测试</p>
+<p>通过benchmark的结果为:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">➜  igos go test -bench=.</span><br><span class="line">goos: linux</span><br><span class="line">goarch: amd64</span><br><span class="line">pkg: github.com/souhup/igos</span><br><span class="line">BenchmarkCountBits1-4           87418681                13.5 ns/op</span><br><span class="line">BenchmarkCountBits2-4           144392588                8.16 ns/op</span><br><span class="line">BenchmarkCountBits3-4           1000000000               0.435 ns/op</span><br><span class="line">PASS</span><br></pre></td></tr></table></figure>
     </div>
 
     
@@ -305,25 +300,24 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/golang/" rel="tag"># golang</a>
-              <a href="/tags/self-reproducing-programs/" rel="tag"># self-reproducing programs</a>
+              <a href="/tags/%E7%AE%97%E6%B3%95/" rel="tag"># 算法</a>
+              <a href="/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/" rel="tag"># 位运算</a>
+              <a href="/tags/go/" rel="tag"># go</a>
+              <a href="/tags/%E4%BA%8C%E8%BF%9B%E5%88%B6/" rel="tag"># 二进制</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-next post-nav-item">
-                <a href="/2020/04/25/%E4%BD%BF%E7%94%A8ubuntu-20/" rel="next" title="使用ubuntu-20">
-                  <i class="fa fa-chevron-left"></i> 使用ubuntu-20
+                <a href="/2020/07/05/%E6%90%AD%E5%BB%BAutils.pro/" rel="next" title="搭建utils.pro">
+                  <i class="fa fa-chevron-left"></i> 搭建utils.pro
                 </a>
             </div>
 
             <span class="post-nav-divider"></span>
 
             <div class="post-nav-prev post-nav-item">
-                <a href="/2020/07/01/%E8%AF%81%E4%B9%A6%E7%AD%BE%E5%8F%91/" rel="prev" title="证书签发">
-                  证书签发 <i class="fa fa-chevron-right"></i>
-                </a>
             </div>
           </div>
       </footer>
@@ -362,7 +356,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#golang的一个自重写程序"><span class="nav-number">1.</span> <span class="nav-text">golang的一个自重写程序</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#计算整数在二进制形式下1的个数"><span class="nav-number">1.</span> <span class="nav-text">计算整数在二进制形式下1的个数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#方法1"><span class="nav-number">1.1.</span> <span class="nav-text">方法1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#方法2"><span class="nav-number">1.2.</span> <span class="nav-text">方法2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#方法3"><span class="nav-number">1.3.</span> <span class="nav-text">方法3</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#性能测试"><span class="nav-number">1.4.</span> <span class="nav-text">性能测试</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 

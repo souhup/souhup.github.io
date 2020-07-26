@@ -4,6 +4,37 @@
   
     
     <entry>
+      <title>计算整数在二进制形式下1的个数</title>
+      <link href="/2020/07/26/%E8%AE%A1%E7%AE%97%E6%95%B4%E6%95%B0%E5%9C%A8%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%BD%A2%E5%BC%8F%E4%B8%8B1%E7%9A%84%E4%B8%AA%E6%95%B0/"/>
+      <url>/2020/07/26/%E8%AE%A1%E7%AE%97%E6%95%B4%E6%95%B0%E5%9C%A8%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%BD%A2%E5%BC%8F%E4%B8%8B1%E7%9A%84%E4%B8%AA%E6%95%B0/</url>
+      
+        <content type="html"><![CDATA[<h2 id="计算整数在二进制形式下1的个数"><a href="#计算整数在二进制形式下1的个数" class="headerlink" title="计算整数在二进制形式下1的个数"></a>计算整数在二进制形式下1的个数</h2><p>给定一个无符号32位整数, 计算它在二进制形式下1的个数</p><h3 id="方法1"><a href="#方法1" class="headerlink" title="方法1"></a>方法1</h3><p>循环地检查每一位是否为1, 并计数.</p><p>这个是最容易想到的方式， 但是需要循环32次, 性能开销过大</p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 计算无符号32位整数二进制形式下1的数量</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">CountBits1</span><span class="params">(num <span class="keyword">uint32</span>)</span> <span class="params">(count <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line"><span class="comment">// 依次检查每一位是否为1, 并计数</span></span><br><span class="line"><span class="keyword">for</span> num &gt; <span class="number">0</span> &#123;</span><br><span class="line"><span class="keyword">if</span> num&amp;<span class="number">0</span>b1 == <span class="number">1</span> &#123;</span><br><span class="line">count++</span><br><span class="line">&#125;</span><br><span class="line">num &gt;&gt;= <span class="number">1</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h3 id="方法2"><a href="#方法2" class="headerlink" title="方法2"></a>方法2</h3><p>从低位开始, 循环地清除1, 直到数字为0.</p><p>对于那些1的个数少的数字，可以大大降低循环的次数</p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 计算无符号32位整数二进制形式下1的数量</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">CountBits2</span><span class="params">(num <span class="keyword">uint32</span>)</span> <span class="params">(count <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line"><span class="comment">// 循环地清除低位的1, 直到数字为0, 1的个数与循环次数一致</span></span><br><span class="line"><span class="keyword">for</span> num &gt; <span class="number">0</span> &#123;</span><br><span class="line">num &amp;= num - <span class="number">1</span></span><br><span class="line">count++</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h3 id="方法3"><a href="#方法3" class="headerlink" title="方法3"></a>方法3</h3><p>类似于归并排序的思想, 我们先将相邻的两个比特位相加, 然后将相邻的两个结果相加, 不断重复将相邻的结果相加，直至最后只剩下一个结果.</p><p>比如对于二进制数<code>0b10001111</code>, 如下图，可以计算出1的个数为5</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">graph BT;</span><br><span class="line">1(101)</span><br><span class="line">1--&gt;2(1)</span><br><span class="line">1--&gt;3(100)</span><br><span class="line">2--&gt;4(1)</span><br><span class="line">2--&gt;5(0)</span><br><span class="line">3--&gt;6(10)</span><br><span class="line">3--&gt;7(10)</span><br><span class="line">4--&gt;8(1)</span><br><span class="line">4--&gt;9(0)</span><br><span class="line">5--&gt;10(0)</span><br><span class="line">5--&gt;11(0)</span><br><span class="line">6--&gt;12(1)</span><br><span class="line">6--&gt;13(1)</span><br><span class="line">7--&gt;14(1)</span><br><span class="line">7--&gt;15(1)</span><br></pre></td></tr></table></figure><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 计算无符号32位整数二进制形式下1的数量</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">CountBits3</span><span class="params">(num <span class="keyword">uint32</span>)</span> <span class="params">(count <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">num = num&amp;<span class="number">0x55555555</span> + num&gt;&gt;<span class="number">1</span>&amp;<span class="number">0x55555555</span></span><br><span class="line">num = num&amp;<span class="number">0x33333333</span> + num&gt;&gt;<span class="number">2</span>&amp;<span class="number">0x33333333</span></span><br><span class="line">num = num&amp;<span class="number">0x0f0f0f0f</span> + num&gt;&gt;<span class="number">4</span>&amp;<span class="number">0x0f0f0f0f</span></span><br><span class="line">num = num&amp;<span class="number">0x00ff00ff</span> + num&gt;&gt;<span class="number">8</span>&amp;<span class="number">0x00ff00ff</span></span><br><span class="line">num = num&amp;<span class="number">0x0000ffff</span> + num&gt;&gt;<span class="number">16</span>&amp;<span class="number">0x0000ffff</span></span><br><span class="line"><span class="keyword">return</span> <span class="keyword">int</span>(num)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h3 id="性能测试"><a href="#性能测试" class="headerlink" title="性能测试"></a>性能测试</h3><p>我们取固定的数<code>0b11001111110011111100111111001111</code>进行测试</p><p>通过benchmark的结果为:</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">➜  igos go test -bench=.</span><br><span class="line">goos: linux</span><br><span class="line">goarch: amd64</span><br><span class="line">pkg: github.com/souhup/igos</span><br><span class="line">BenchmarkCountBits1-4           87418681                13.5 ns/op</span><br><span class="line">BenchmarkCountBits2-4           144392588                8.16 ns/op</span><br><span class="line">BenchmarkCountBits3-4           1000000000               0.435 ns/op</span><br><span class="line">PASS</span><br></pre></td></tr></table></figure>]]></content>
+      
+      
+      <categories>
+          
+          <category> algorithm </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 算法 </tag>
+            
+            <tag> 位运算 </tag>
+            
+            <tag> go </tag>
+            
+            <tag> 二进制 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>搭建utils.pro</title>
       <link href="/2020/07/05/%E6%90%AD%E5%BB%BAutils.pro/"/>
       <url>/2020/07/05/%E6%90%AD%E5%BB%BAutils.pro/</url>
@@ -20,11 +51,11 @@
       
         <tags>
             
-            <tag> docker </tag>
-            
             <tag> website </tag>
             
             <tag> ECS </tag>
+            
+            <tag> docker </tag>
             
             <tag> github </tag>
             
@@ -167,9 +198,9 @@
             
             <tag> linux </tag>
             
-            <tag> centos-8 </tag>
-            
             <tag> docker </tag>
+            
+            <tag> centos-8 </tag>
             
             <tag> mysql </tag>
             
