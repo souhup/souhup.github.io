@@ -151,3 +151,16 @@ docker run \
     --user root \
     prom/prometheus
 ```
+
+### 安装docker版postgres
+
+```bash
+docker run -d \
+    --name postgres-13 \
+    --restart always \
+    --user root \
+    --net host \
+    -e POSTGRES_PASSWORD=密码 \
+    -v /home/souhup/app/postgres-13/data:/var/lib/postgresql/data \
+    postgres:13
+```
