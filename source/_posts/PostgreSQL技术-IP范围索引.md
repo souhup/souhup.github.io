@@ -19,6 +19,8 @@ tags:
 
 比如，我们以IP2LOCATION家的一个免费数据库[LITE IP-COUNTRY Database](https://lite.ip2location.com/database/ip-country)为例, 该数据提供了IP段起始地址，IP段结束地址,国家代码, 国家名称.
 
+如果你下载时遇到了一些困难，那么可以点击[这里](/download/IP2LOCATION-LITE-DB1.CSV.zip)
+
 ### 方案1. BTREE索引-int8
 
 我们按照其官方下载页面提供的PostgreSQL建表建议:
