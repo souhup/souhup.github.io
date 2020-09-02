@@ -207,6 +207,233 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://souhup.top/2020/09/02/PostgreSQL%E6%8A%80%E6%9C%AF-IP%E8%8C%83%E5%9B%B4%E7%B4%A2%E5%BC%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="souhup">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="美好的每一天">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/09/02/PostgreSQL%E6%8A%80%E6%9C%AF-IP%E8%8C%83%E5%9B%B4%E7%B4%A2%E5%BC%95/" class="post-title-link" itemprop="url">PostgreSQL技术-IP范围索引</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-09-02 23:40:00" itemprop="dateCreated datePublished" datetime="2020-09-02T23:40:00+08:00">2020-09-02</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-09-03 01:07:52" itemprop="dateModified" datetime="2020-09-03T01:07:52+08:00">2020-09-03</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/technique/" itemprop="url" rel="index">
+                    <span itemprop="name">technique</span>
+                  </a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>5.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>9 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="PostgreSQL技术-IP范围索引"><a href="#PostgreSQL技术-IP范围索引" class="headerlink" title="PostgreSQL技术-IP范围索引"></a>PostgreSQL技术-IP范围索引</h2><p>本文来源于自己的经验，但也主要参考一篇<a href="https://github.com/digoal/blog/blob/master/201701/20170126_02.md" target="_blank" rel="noopener">文章</a></p>
+<h3 id="场景描述"><a href="#场景描述" class="headerlink" title="场景描述"></a>场景描述</h3><p>在业务上，有时需要根据一个IP地址查询其城市，经纬度，运营商等信息, 那么该如何快速的查询该IP的信息.</p>
+<p>比如，我们以IP2LOCATION家的一个免费数据库<a href="https://lite.ip2location.com/database/ip-country" target="_blank" rel="noopener">LITE IP-COUNTRY Database</a>为例, 该数据提供了IP段起始地址，IP段结束地址,国家代码, 国家名称.</p>
+<h3 id="方案1-BTREE索引-int8"><a href="#方案1-BTREE索引-int8" class="headerlink" title="方案1. BTREE索引-int8"></a>方案1. BTREE索引-int8</h3><p>我们按照其官方下载页面提供的PostgreSQL建表建议:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> ip2location_db1_test1(</span><br><span class="line">	ip_from <span class="built_in">bigint</span> <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">	ip_to <span class="built_in">bigint</span> <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">	country_code <span class="built_in">character</span>(<span class="number">2</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">	country_name <span class="built_in">character</span> <span class="built_in">varying</span>(<span class="number">64</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">	<span class="keyword">CONSTRAINT</span> ip2location_db1_pkey PRIMARY <span class="keyword">KEY</span> (ip_from, ip_to)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<p>基准测试</p>
+<p>构建文件: <code>./test-sql1.sql</code></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">\<span class="keyword">set</span> ip random(<span class="number">0</span>, <span class="number">2147483647</span>)</span><br><span class="line"><span class="keyword">select</span> *</span><br><span class="line"><span class="keyword">from</span> ip2location_db1_test1</span><br><span class="line"><span class="keyword">where</span> ip_from &lt;= :ip</span><br><span class="line">  <span class="keyword">and</span> ip_to &gt;= :ip;</span><br></pre></td></tr></table></figure>
+
+<p>执行测试:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pgbench -M simple -c 4 -j 4 -f ./<span class="built_in">test</span>-sql1.sql -n -T 30 -h localhost -U postgres <span class="built_in">test</span></span><br></pre></td></tr></table></figure>
+
+<p>测试结果</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">transaction type: ./test-sql1.sql</span><br><span class="line">scaling factor: 1</span><br><span class="line">query mode: simple</span><br><span class="line">number of clients: 4</span><br><span class="line">number of threads: 4</span><br><span class="line">duration: 30 s</span><br><span class="line">number of transactions actually processed: 39007</span><br><span class="line">latency average = 3.077 ms</span><br><span class="line">tps = 1299.848793 (including connections establishing)</span><br><span class="line">tps = 1299.933199 (excluding connections establishing)</span><br></pre></td></tr></table></figure>
+
+<h3 id="方案2-BTREE索引-int4"><a href="#方案2-BTREE索引-int4" class="headerlink" title="方案2. BTREE索引-int4"></a>方案2. BTREE索引-int4</h3><p>为了让字段占用空间更小, 我们在方案1的基础上选用int4 (int4即int)</p>
+<p>建表:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> ip2location_db1_test2</span><br><span class="line">(</span><br><span class="line">    ip_from      <span class="built_in">int</span>         <span class="keyword">not</span> <span class="literal">null</span>,</span><br><span class="line">    ip_to        <span class="built_in">int</span>         <span class="keyword">not</span> <span class="literal">null</span>,</span><br><span class="line">    country_code <span class="built_in">char</span>(<span class="number">2</span>)     <span class="keyword">not</span> <span class="literal">null</span>,</span><br><span class="line">    country_name <span class="built_in">varchar</span>(<span class="number">64</span>) <span class="keyword">not</span> <span class="literal">null</span></span><br><span class="line">);</span><br><span class="line"><span class="keyword">create</span> <span class="keyword">index</span> ip2location_db1_test2_pkey <span class="keyword">on</span> ip2location_db1_test2 <span class="keyword">using</span> btree (ip_from, ip_to);</span><br></pre></td></tr></table></figure>
+
+<p>基准测试</p>
+<p>构建文件: <code>./test-sql2.sql</code></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">\<span class="keyword">set</span> ip random(<span class="number">0</span>, <span class="number">2147483647</span>)</span><br><span class="line"><span class="keyword">select</span> *</span><br><span class="line"><span class="keyword">from</span> ip2location_db1_test2</span><br><span class="line"><span class="keyword">where</span> ip_from &lt;= :ip - <span class="number">2147483648</span></span><br><span class="line">  <span class="keyword">and</span> ip_to &gt;= :ip - <span class="number">2147483648</span>;</span><br></pre></td></tr></table></figure>
+
+<p>执行测试:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pgbench -M simple -c 4 -j 4 -f ./<span class="built_in">test</span>-sql2.sql -n -T 30 -h localhost -U postgres <span class="built_in">test</span></span><br></pre></td></tr></table></figure>
+
+<p>测试结果</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">transaction type: ./test-sql2.sql</span><br><span class="line">scaling factor: 1</span><br><span class="line">query mode: simple</span><br><span class="line">number of clients: 4</span><br><span class="line">number of threads: 4</span><br><span class="line">duration: 30 s</span><br><span class="line">number of transactions actually processed: 173751</span><br><span class="line">latency average = 0.691 ms</span><br><span class="line">tps = 5791.490212 (including connections establishing)</span><br><span class="line">tps = 5791.971583 (excluding connections establishing)</span><br></pre></td></tr></table></figure>
+
+<h3 id="方案3-Gist索引-iprange"><a href="#方案3-Gist索引-iprange" class="headerlink" title="方案3. Gist索引-iprange"></a>方案3. Gist索引-iprange</h3><p>我们选用Gist索引, 类型选用自定义的iprange</p>
+<p>建表:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">type</span> iprange <span class="keyword">as</span> <span class="keyword">range</span></span><br><span class="line">(</span><br><span class="line">    <span class="keyword">subtype</span>=inet</span><br><span class="line">);</span><br><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> ip2location_db1_test3</span><br><span class="line">(</span><br><span class="line">    ip_range     iprange     <span class="keyword">not</span> <span class="literal">null</span>,</span><br><span class="line">    country_code <span class="built_in">char</span>(<span class="number">2</span>)     <span class="keyword">not</span> <span class="literal">null</span>,</span><br><span class="line">    country_name <span class="built_in">varchar</span>(<span class="number">64</span>) <span class="keyword">not</span> <span class="literal">null</span></span><br><span class="line">);</span><br><span class="line"><span class="keyword">create</span> <span class="keyword">index</span> ip2location_db1_test3_key <span class="keyword">on</span> ip2location_db1_test3 <span class="keyword">using</span> gist (ip_range);</span><br></pre></td></tr></table></figure>
+
+<p>基准测试</p>
+<p>构建文件: <code>./test-sql3.sql</code></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">\<span class="keyword">set</span> ip random(<span class="number">0</span>, <span class="number">2147483647</span>)</span><br><span class="line"><span class="keyword">select</span> *</span><br><span class="line"><span class="keyword">from</span> ip2location_db1_test3</span><br><span class="line"><span class="keyword">where</span> ip_range @&gt; <span class="string">'0.0.0.0'</span>::inet + :ip;</span><br></pre></td></tr></table></figure>
+
+<p>执行测试:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pgbench -M simple -c 4 -j 4 -f ./<span class="built_in">test</span>-sql3.sql -n -T 30 -h localhost -U postgres <span class="built_in">test</span></span><br></pre></td></tr></table></figure>
+
+<p>测试结果</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">transaction type: ./test-sql3.sql</span><br><span class="line">scaling factor: 1</span><br><span class="line">query mode: simple</span><br><span class="line">number of clients: 4</span><br><span class="line">number of threads: 4</span><br><span class="line">duration: 30 s</span><br><span class="line">number of transactions actually processed: 198253</span><br><span class="line">latency average = 0.605 ms</span><br><span class="line">tps = 6608.167036 (including connections establishing)</span><br><span class="line">tps = 6608.692985 (excluding connections establishing)</span><br></pre></td></tr></table></figure>
+
+<h3 id="方案4-Gist索引-int8range"><a href="#方案4-Gist索引-int8range" class="headerlink" title="方案4. Gist索引-int8range"></a>方案4. Gist索引-int8range</h3><p>我们选用Gist索引, 类型选用int8range</p>
+<p>建表:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> ip2location_db1_test4</span><br><span class="line">(</span><br><span class="line">    ip_range     int8range             <span class="keyword">not</span> <span class="literal">null</span>,</span><br><span class="line">    country_code <span class="built_in">character</span>(<span class="number">2</span>)          <span class="keyword">not</span> <span class="literal">null</span>,</span><br><span class="line">    country_name <span class="built_in">character</span> <span class="built_in">varying</span>(<span class="number">64</span>) <span class="keyword">not</span> <span class="literal">null</span></span><br><span class="line">);</span><br><span class="line"><span class="keyword">create</span> <span class="keyword">index</span> ip2location_db1_test4_range <span class="keyword">on</span> ip2location_db1_test4 <span class="keyword">using</span> gist (ip_range);</span><br></pre></td></tr></table></figure>
+
+<p>基准测试</p>
+<p>构建文件: <code>./test-sql4.sql</code></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">\<span class="keyword">set</span> ip random(<span class="number">0</span>, <span class="number">2147483647</span>)</span><br><span class="line"><span class="keyword">select</span> *</span><br><span class="line"><span class="keyword">from</span> ip2location_db1_test4</span><br><span class="line"><span class="keyword">where</span> ip_range @&gt; :ip;</span><br></pre></td></tr></table></figure>
+
+<p>执行测试:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pgbench -M simple -c 4 -j 4 -f ./<span class="built_in">test</span>-sql4.sql -n -T 30 -h localhost -U postgres <span class="built_in">test</span></span><br></pre></td></tr></table></figure>
+
+<p>测试结果</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">transaction type: ./test-sql4.sql</span><br><span class="line">scaling factor: 1</span><br><span class="line">query mode: simple</span><br><span class="line">number of clients: 4</span><br><span class="line">number of threads: 4</span><br><span class="line">duration: 30 s</span><br><span class="line">number of transactions actually processed: 1070154</span><br><span class="line">latency average = 0.112 ms</span><br><span class="line">tps = 35671.455573 (including connections establishing)</span><br><span class="line">tps = 35674.666859 (excluding connections establishing)</span><br></pre></td></tr></table></figure>
+
+<h3 id="方案5-Gist索引-int4range"><a href="#方案5-Gist索引-int4range" class="headerlink" title="方案5. Gist索引-int4range"></a>方案5. Gist索引-int4range</h3><p>我们对方案4进行改进, 将int8range修改为int4range</p>
+<p>建表:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> ip2location_db1_test5</span><br><span class="line">(</span><br><span class="line">    ip_range     int4range             <span class="keyword">not</span> <span class="literal">null</span>,</span><br><span class="line">    country_code <span class="built_in">character</span>(<span class="number">2</span>)          <span class="keyword">not</span> <span class="literal">null</span>,</span><br><span class="line">    country_name <span class="built_in">character</span> <span class="built_in">varying</span>(<span class="number">64</span>) <span class="keyword">not</span> <span class="literal">null</span></span><br><span class="line">);</span><br><span class="line"><span class="keyword">create</span> <span class="keyword">index</span> ip2location_db1_test5_range <span class="keyword">on</span> ip2location_db1_test5 <span class="keyword">using</span> gist (ip_range);</span><br></pre></td></tr></table></figure>
+
+<p>基准测试</p>
+<p>构建文件: <code>./test-sql5.sql</code></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">\<span class="keyword">set</span> ip random(<span class="number">0</span>, <span class="number">2147483647</span>)</span><br><span class="line"><span class="keyword">select</span> *</span><br><span class="line"><span class="keyword">from</span> ip2location_db1_test5</span><br><span class="line"><span class="keyword">where</span> ip_range @&gt; (:ip - <span class="number">2147483648</span>)::int4;</span><br></pre></td></tr></table></figure>
+
+<p>执行测试:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pgbench -M simple -c 4 -j 4 -f ./<span class="built_in">test</span>-sql5.sql -n -T 30 -h localhost -U postgres <span class="built_in">test</span></span><br></pre></td></tr></table></figure>
+
+<p>测试结果</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">ransaction type: ./test-sql5.sql</span><br><span class="line">scaling factor: 1</span><br><span class="line">query mode: simple</span><br><span class="line">number of clients: 4</span><br><span class="line">number of threads: 4</span><br><span class="line">duration: 30 s</span><br><span class="line">number of transactions actually processed: 980291</span><br><span class="line">latency average = 0.122 ms</span><br><span class="line">tps = 32675.974742 (including connections establishing)</span><br><span class="line">tps = 32678.161957 (excluding connections establishing)</span><br></pre></td></tr></table></figure>
+
+<h3 id="方案6-Gist索引-box"><a href="#方案6-Gist索引-box" class="headerlink" title="方案6. Gist索引-box"></a>方案6. Gist索引-box</h3><p>我们在PostgreSQL的wiki里可以找到这样一个<a href="https://wiki.postgresql.org/wiki/GeoIP_index" target="_blank" rel="noopener">页面</a>, 按照其建议</p>
+<p>建表:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> ip2location_db1_test6</span><br><span class="line">(</span><br><span class="line">    ip_range     box                   <span class="keyword">not</span> <span class="literal">null</span>,</span><br><span class="line">    country_code <span class="built_in">character</span>(<span class="number">2</span>)          <span class="keyword">not</span> <span class="literal">null</span>,</span><br><span class="line">    country_name <span class="built_in">character</span> <span class="built_in">varying</span>(<span class="number">64</span>) <span class="keyword">not</span> <span class="literal">null</span></span><br><span class="line">);</span><br><span class="line"><span class="keyword">create</span> <span class="keyword">index</span> ip2location_db1_test6_range <span class="keyword">on</span> ip2location_db1_test6 <span class="keyword">using</span> gist (ip_range);</span><br></pre></td></tr></table></figure>
+
+<p>基准测试</p>
+<p>构建文件: <code>./test-sql6.sql</code></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">\<span class="keyword">set</span> ip random(<span class="number">0</span>, <span class="number">2147483647</span>)</span><br><span class="line"><span class="keyword">select</span> *</span><br><span class="line"><span class="keyword">from</span> ip2location_db1_test6</span><br><span class="line"><span class="keyword">where</span> ip_range @&gt; box(point(:ip, :ip), point(:ip, :ip));</span><br></pre></td></tr></table></figure>
+
+<p>执行测试:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pgbench -M simple -c 4 -j 4 -f ./<span class="built_in">test</span>-sql6.sql -n -T 30 -h localhost -U postgres <span class="built_in">test</span></span><br></pre></td></tr></table></figure>
+
+<p>测试结果</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">transaction type: ./test-sql6.sql</span><br><span class="line">scaling factor: 1</span><br><span class="line">query mode: simple</span><br><span class="line">number of clients: 4</span><br><span class="line">number of threads: 4</span><br><span class="line">duration: 30 s</span><br><span class="line">number of transactions actually processed: 1218063</span><br><span class="line">latency average = 0.099 ms</span><br><span class="line">tps = 40600.765922 (including connections establishing)</span><br><span class="line">tps = 40604.364144 (excluding connections establishing)</span><br></pre></td></tr></table></figure>
+
+<h3 id="数据与索引空间"><a href="#数据与索引空间" class="headerlink" title="数据与索引空间"></a>数据与索引空间</h3><p>最后, 我们展示各种方案下数据和索引所占空间</p>
+<p>查询语句</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> table_name                                               <span class="string">"表名"</span>,</span><br><span class="line">       pg_size_pretty(pg_relation_size(table_name::<span class="built_in">text</span>))       <span class="string">"数据占用空间"</span>,</span><br><span class="line">       pg_size_pretty(pg_indexes_size(table_name::<span class="built_in">text</span>))        <span class="string">"索引占用空间"</span>,</span><br><span class="line">       pg_size_pretty(pg_total_relation_size(table_name::<span class="built_in">text</span>)) <span class="string">"数据和索引占用空间"</span></span><br><span class="line"><span class="keyword">FROM</span> information_schema.tables</span><br><span class="line"><span class="keyword">WHERE</span> table_schema = <span class="string">'public'</span></span><br><span class="line">  <span class="keyword">AND</span> table_type = <span class="string">'BASE TABLE'</span></span><br><span class="line">  <span class="keyword">and</span> table_name <span class="keyword">like</span> <span class="string">'ip2location_db1_%'</span>;</span><br></pre></td></tr></table></figure>
+
+<p>查询结果</p>
+<table>
+<thead>
+<tr>
+<th align="left">表名</th>
+<th align="left">数据占用空间</th>
+<th align="left">索引占用空间</th>
+<th align="left">数据和索引占用空间</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">ip2location_db1_test1</td>
+<td align="left">12 MB</td>
+<td align="left">10 MB</td>
+<td align="left">22 MB</td>
+</tr>
+<tr>
+<td align="left">ip2location_db1_test2</td>
+<td align="left">10 MB</td>
+<td align="left">4080 kB</td>
+<td align="left">14 MB</td>
+</tr>
+<tr>
+<td align="left">ip2location_db1_test3</td>
+<td align="left">12 MB</td>
+<td align="left">14 MB</td>
+<td align="left">26 MB</td>
+</tr>
+<tr>
+<td align="left">ip2location_db1_test4</td>
+<td align="left">13 MB</td>
+<td align="left">14 MB</td>
+<td align="left">27 MB</td>
+</tr>
+<tr>
+<td align="left">ip2location_db1_test5</td>
+<td align="left">11 MB</td>
+<td align="left">11 MB</td>
+<td align="left">22 MB</td>
+</tr>
+<tr>
+<td align="left">ip2location_db1_test6</td>
+<td align="left">14 MB</td>
+<td align="left">18 MB</td>
+<td align="left">32 MB</td>
+</tr>
+</tbody></table>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>由于方案6的查询性能更高, 我们最终选用它。它的数据空间和索引空间更大，但随着IP信息表越来越宽，这点劣势就会变得不明显。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://souhup.top/2020/08/31/PostgreSQL%E6%8A%80%E6%9C%AF-%E7%AA%97%E5%8F%A3%E5%87%BD%E6%95%B0/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1519,148 +1746,12 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://souhup.top/2019/11/03/%E5%9C%A8github%E4%B8%8A%E6%90%AD%E5%BB%BA%E8%87%AA%E5%B7%B1%E7%9A%84%E5%8D%9A%E5%AE%A2/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="souhup">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="美好的每一天">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/11/03/%E5%9C%A8github%E4%B8%8A%E6%90%AD%E5%BB%BA%E8%87%AA%E5%B7%B1%E7%9A%84%E5%8D%9A%E5%AE%A2/" class="post-title-link" itemprop="url">在github上搭建自己的博客</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-11-03 00:04:24" itemprop="dateCreated datePublished" datetime="2019-11-03T00:04:24+08:00">2019-11-03</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-06-30 23:59:58" itemprop="dateModified" datetime="2020-06-30T23:59:58+08:00">2020-06-30</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/tutorial/" itemprop="url" rel="index">
-                    <span itemprop="name">tutorial</span>
-                  </a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>3.3k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>6 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>将搭建博客的步骤记录下来分享给大家</p>
-<h3 id="安装Node-js"><a href="#安装Node-js" class="headerlink" title="安装Node.js"></a>安装Node.js</h3><p>我选择的操作系统是fedora, 选择的博客框架为hexo</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装nodejs</span></span><br><span class="line">sudo dnf install nodejs</span><br><span class="line"><span class="comment"># 设置淘宝镜像源</span></span><br><span class="line">npm config <span class="built_in">set</span> registry https://registry.npm.taobao.org</span><br></pre></td></tr></table></figure>
-
-<h3 id="安装hexo与主题"><a href="#安装hexo与主题" class="headerlink" title="安装hexo与主题"></a>安装hexo与主题</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装hexo</span></span><br><span class="line">sudo npm install -g hexo-cli</span><br><span class="line"><span class="comment"># 创建一个工作文件夹</span></span><br><span class="line">hexo init souhup.github.io</span><br><span class="line"><span class="comment"># 通过npm初始化</span></span><br><span class="line">npm install</span><br><span class="line"><span class="comment"># 将工作目录交由git管理</span></span><br><span class="line">git init</span><br><span class="line"><span class="comment"># 在github上对theme-next/hexo-theme-next进行fork</span></span><br><span class="line">git submodule add git@github.com:souhup/hexo-theme-next.git themes/next</span><br><span class="line"><span class="built_in">cd</span> themes/next</span><br><span class="line">git remote add upstream git@github.com:theme-next/hexo-theme-next.git</span><br><span class="line"><span class="comment"># 将开发部分保存到source分支</span></span><br><span class="line">git checkout -b <span class="built_in">source</span></span><br><span class="line">git remote add origin git@github.com:souhup/souhup.github.io.git</span><br></pre></td></tr></table></figure>
-
-<h3 id="定制博客"><a href="#定制博客" class="headerlink" title="定制博客"></a>定制博客</h3><h4 id="修改网站名称"><a href="#修改网站名称" class="headerlink" title="修改网站名称"></a>修改网站名称</h4><p>修改修改<code>souhup.github.io/_config.yml</code></p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Site</span></span><br><span class="line"><span class="attr">title:</span> <span class="string">美好的每一天</span></span><br><span class="line"><span class="attr">subtitle:</span> <span class="string">''</span></span><br><span class="line"><span class="attr">description:</span> <span class="string">'blog'</span></span><br><span class="line"><span class="attr">keywords:</span></span><br><span class="line"><span class="attr">author:</span> <span class="string">souhup</span></span><br><span class="line"><span class="attr">language:</span> <span class="string">zh-CN</span></span><br><span class="line"><span class="attr">timezone:</span> <span class="string">''</span></span><br></pre></td></tr></table></figure>
-
-<h4 id="修改网站图标和个人图标"><a href="#修改网站图标和个人图标" class="headerlink" title="修改网站图标和个人图标"></a>修改网站图标和个人图标</h4><p>向<code>souhup.github.io/themes/next/source/images</code>添加图标</p>
-<p>修改<code>souhup.github.io/themes/next/_config.yml</code></p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">favicon:</span></span><br><span class="line">  <span class="attr">small:</span> <span class="string">/images/favicon-16x16.ico</span></span><br><span class="line">  <span class="attr">medium:</span> <span class="string">/images/favicon-32x32.ico</span></span><br><span class="line">  <span class="attr">apple_touch_icon:</span> <span class="string">/images/apple-touch-icon-next.png</span></span><br><span class="line">  <span class="attr">safari_pinned_tab:</span> <span class="string">/images/logo.svg</span></span><br><span class="line">  <span class="comment">#android_manifest: /images/manifest.json</span></span><br><span class="line">  <span class="comment">#ms_browserconfig: /images/browserconfig.xml</span></span><br><span class="line">  </span><br><span class="line"><span class="comment"># Sidebar Avatar</span></span><br><span class="line"><span class="attr">avatar:</span></span><br><span class="line">  <span class="comment"># Replace the default image and set the url here.</span></span><br><span class="line">  <span class="attr">url:</span> <span class="string">/images/avatar.jpg</span></span><br><span class="line">  <span class="comment"># If true, the avatar would be dispalyed in circle.</span></span><br><span class="line">  <span class="attr">rounded:</span> <span class="literal">true</span></span><br><span class="line">  <span class="comment"># If true, the avatar would be rotated with the cursor.</span></span><br><span class="line">  <span class="attr">rotated:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
-
-<h4 id="添加tags和categories页面"><a href="#添加tags和categories页面" class="headerlink" title="添加tags和categories页面"></a>添加tags和categories页面</h4><p>执行如下命令</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hexo new page categories</span><br><span class="line">hexo new page tags</span><br></pre></td></tr></table></figure>
-<p>修改<code>souhup.github.io/sources/{categories|tags}/index.md</code></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">title: 文章分类|标签</span><br><span class="line">date: 2019-11-04 00:00:00</span><br><span class="line">type: &#123;categories|tags&#125;</span><br><span class="line">---</span><br></pre></td></tr></table></figure>
-<p>修改<code>souhup.github.io/scaffolds/post.md</code></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">title: &#123;&#123; title &#125;&#125;</span><br><span class="line">date: &#123;&#123; date &#125;&#125;</span><br><span class="line">tags:</span><br><span class="line">categories:</span><br><span class="line">---</span><br></pre></td></tr></table></figure>
-
-<p>修改<code>souhup.github.io/themes/next/_config.yml</code></p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">menu:</span></span><br><span class="line">  <span class="attr">home:</span> <span class="string">/</span> <span class="string">||</span> <span class="string">home</span></span><br><span class="line">  <span class="comment">#about: /about/ || user</span></span><br><span class="line">  <span class="attr">tags:</span> <span class="string">/tags/</span> <span class="string">||</span> <span class="string">tags</span></span><br><span class="line">  <span class="attr">categories:</span> <span class="string">/categories/</span> <span class="string">||</span> <span class="string">th</span></span><br><span class="line">  <span class="attr">archives:</span> <span class="string">/archives/</span> <span class="string">||</span> <span class="string">archive</span></span><br><span class="line">  <span class="comment">#schedule: /schedule/ || calendar</span></span><br><span class="line">  <span class="comment">#sitemap: /sitemap.xml || sitemap</span></span><br><span class="line">  <span class="comment">#commonweal: /404/ || heartbeat</span></span><br></pre></td></tr></table></figure>
-
-<h4 id="显示阅读进度"><a href="#显示阅读进度" class="headerlink" title="显示阅读进度"></a>显示阅读进度</h4><p>修改<code>souhup.github.io/themes/next/_config.yml</code></p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">back2top:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="comment"># Back to top in sidebar.</span></span><br><span class="line">  <span class="attr">sidebar:</span> <span class="literal">false</span></span><br><span class="line">  <span class="comment"># Scroll percent label in b2t button.</span></span><br><span class="line">  <span class="attr">scrollpercent:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
-
-<h4 id="在右上角显示github链接"><a href="#在右上角显示github链接" class="headerlink" title="在右上角显示github链接"></a>在右上角显示github链接</h4><p>修改<code>souhup.github.io/themes/next/_config.yml</code></p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># `Follow me on GitHub` banner in the top-right corner.</span></span><br><span class="line"><span class="attr">github_banner:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">permalink:</span> <span class="string">https://github.com/souhup</span></span><br><span class="line">  <span class="attr">title:</span> <span class="string">Follow</span> <span class="string">me</span> <span class="string">on</span> <span class="string">GitHub</span></span><br></pre></td></tr></table></figure>
-
-
-<h4 id="添加本地搜索"><a href="#添加本地搜索" class="headerlink" title="添加本地搜索"></a>添加本地搜索</h4><p>执行以下命令</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-generator-search --save</span><br></pre></td></tr></table></figure>
-<p>修改<code>souhup.github.io/themes/next/_config.yml</code></p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Local Search</span></span><br><span class="line"><span class="comment"># Dependencies: https://github.com/theme-next/hexo-generator-searchdb</span></span><br><span class="line"><span class="attr">local_search:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="comment"># If auto, trigger search by changing input.</span></span><br><span class="line">  <span class="comment"># If manual, trigger search by pressing enter key or search button.</span></span><br><span class="line">  <span class="attr">trigger:</span> <span class="string">auto</span></span><br><span class="line">  <span class="comment"># Show top n results per article, show all results by setting to -1</span></span><br><span class="line">  <span class="attr">top_n_per_article:</span> <span class="number">1</span></span><br><span class="line">  <span class="comment"># Unescape html strings to the readable one.</span></span><br><span class="line">  <span class="attr">unescape:</span> <span class="literal">false</span></span><br><span class="line">  <span class="comment"># Preload the search data when the page loads.</span></span><br><span class="line">  <span class="attr">preload:</span> <span class="literal">false</span></span><br></pre></td></tr></table></figure>
-
-<h4 id="添加字数统计"><a href="#添加字数统计" class="headerlink" title="添加字数统计"></a>添加字数统计</h4><p>执行以下命令</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-symbols-count-time --save</span><br></pre></td></tr></table></figure>
-<p>修改<code>souhup.github.io/_config.yml</code>,在最后添加如下内容</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># workcount</span></span><br><span class="line"><span class="attr">symbols_count_time:</span></span><br><span class="line">  <span class="attr">symbols:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">time:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">total_symbols:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">total_time:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
-<p>修改<code>souhup.github.io/themes/next/_config.yml</code></p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">symbols_count_time:</span></span><br><span class="line">  <span class="attr">separated_meta:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">item_text_post:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">item_text_total:</span> <span class="literal">false</span></span><br><span class="line">  <span class="attr">awl:</span> <span class="number">2</span></span><br><span class="line">  <span class="attr">wpm:</span> <span class="number">300</span></span><br></pre></td></tr></table></figure>
-<p>随后需要执行<code>hexo clean</code></p>
-<h3 id="向git提交"><a href="#向git提交" class="headerlink" title="向git提交"></a>向git提交</h3><p>执行如下命令</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure>
-
-<p>修改<code>souhup.github.io/_config.yml</code></p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Deployment</span></span><br><span class="line"><span class="comment">## Docs: https://hexo.io/docs/deployment.html</span></span><br><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">  <span class="attr">repo:</span> <span class="string">git@github.com:souhup/souhup.github.io.git</span></span><br><span class="line">  <span class="attr">branch:</span> <span class="string">master</span></span><br></pre></td></tr></table></figure>
-
-<p>在github创建一个名为<code>souhup.github.io</code>的新项目</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 将自己的博客发布到github上</span></span><br><span class="line">hexo d</span><br><span class="line"><span class="comment"># 提交工作内容</span></span><br><span class="line">git add .</span><br><span class="line">git commit</span><br><span class="line"><span class="comment"># 推送工作内容</span></span><br><span class="line">git push -u origin <span class="built_in">source</span></span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
+  <nav class="pagination">
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+  </nav>
 
 
 
@@ -1705,7 +1796,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">10</span>
+          <span class="site-state-item-count">11</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1718,7 +1809,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">29</span>
+        <span class="site-state-item-count">30</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1752,12 +1843,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-area-chart"></i>
     </span>
-    <span title="站点总字数">23k</span>
+    <span title="站点总字数">28k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">38 分钟</span>
+    <span title="站点阅读时长">47 分钟</span>
 </div>
 
         
