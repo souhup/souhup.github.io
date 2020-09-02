@@ -238,7 +238,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-09-03 01:07:52" itemprop="dateModified" datetime="2020-09-03T01:07:52+08:00">2020-09-03</time>
+                <time title="修改时间：2020-09-03 01:13:45" itemprop="dateModified" datetime="2020-09-03T01:13:45+08:00">2020-09-03</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -280,6 +280,7 @@
           <h2 id="PostgreSQL技术-IP范围索引"><a href="#PostgreSQL技术-IP范围索引" class="headerlink" title="PostgreSQL技术-IP范围索引"></a>PostgreSQL技术-IP范围索引</h2><p>本文来源于自己的经验，但也主要参考一篇<a href="https://github.com/digoal/blog/blob/master/201701/20170126_02.md" target="_blank" rel="noopener">文章</a></p>
 <h3 id="场景描述"><a href="#场景描述" class="headerlink" title="场景描述"></a>场景描述</h3><p>在业务上，有时需要根据一个IP地址查询其城市，经纬度，运营商等信息, 那么该如何快速的查询该IP的信息.</p>
 <p>比如，我们以IP2LOCATION家的一个免费数据库<a href="https://lite.ip2location.com/database/ip-country" target="_blank" rel="noopener">LITE IP-COUNTRY Database</a>为例, 该数据提供了IP段起始地址，IP段结束地址,国家代码, 国家名称.</p>
+<p>如果你下载时遇到了一些困难，那么可以点击<a href="/download/IP2LOCATION-LITE-DB1.CSV.zip">这里</a></p>
 <h3 id="方案1-BTREE索引-int8"><a href="#方案1-BTREE索引-int8" class="headerlink" title="方案1. BTREE索引-int8"></a>方案1. BTREE索引-int8</h3><p>我们按照其官方下载页面提供的PostgreSQL建表建议:</p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> ip2location_db1_test1(</span><br><span class="line">	ip_from <span class="built_in">bigint</span> <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">	ip_to <span class="built_in">bigint</span> <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">	country_code <span class="built_in">character</span>(<span class="number">2</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">	country_name <span class="built_in">character</span> <span class="built_in">varying</span>(<span class="number">64</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">	<span class="keyword">CONSTRAINT</span> ip2location_db1_pkey PRIMARY <span class="keyword">KEY</span> (ip_from, ip_to)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
 
