@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.5.0',
+    exturl: false,
+    sidebar: {"position":"right","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="PostgreSQL技术-索引为了更加高效地查询数据, 我们应该考虑使用索引. 在PostgreSQL中, 我们可以通过如下地方式创建索引 123456CREATE [ UNIQUE ] INDEX [ CONCURRENTLY ] [ [ IF NOT EXISTS ] name ] ON [ ONLY ] table_name [ USING method ]    ( &amp;#123; colu">
+<meta name="keywords" content="postgres,sql,index">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PostgreSQL技术-索引">
+<meta property="og:url" content="https:&#x2F;&#x2F;souhup.top&#x2F;2020&#x2F;09&#x2F;05&#x2F;PostgreSQL%E6%8A%80%E6%9C%AF-%E7%B4%A2%E5%BC%95&#x2F;index.html">
+<meta property="og:site_name" content="美好的每一天">
+<meta property="og:description" content="PostgreSQL技术-索引为了更加高效地查询数据, 我们应该考虑使用索引. 在PostgreSQL中, 我们可以通过如下地方式创建索引 123456CREATE [ UNIQUE ] INDEX [ CONCURRENTLY ] [ [ IF NOT EXISTS ] name ] ON [ ONLY ] table_name [ USING method ]    ( &amp;#123; colu">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-09-05T17:57:23.262Z">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://souhup.top/2020/09/05/PostgreSQL%E6%8A%80%E6%9C%AF-%E7%B4%A2%E5%BC%95/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>PostgreSQL技术-索引 | 美好的每一天</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">美好的每一天</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/souhup" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://souhup.top/2020/09/05/PostgreSQL%E6%8A%80%E6%9C%AF-%E7%B4%A2%E5%BC%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="souhup">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="美好的每一天">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          PostgreSQL技术-索引
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-09-05 22:00:00" itemprop="dateCreated datePublished" datetime="2020-09-05T22:00:00+08:00">2020-09-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-09-06 01:57:23" itemprop="dateModified" datetime="2020-09-06T01:57:23+08:00">2020-09-06</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/technique/" itemprop="url" rel="index">
+                    <span itemprop="name">technique</span>
+                  </a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>6.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>10 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="PostgreSQL技术-索引"><a href="#PostgreSQL技术-索引" class="headerlink" title="PostgreSQL技术-索引"></a>PostgreSQL技术-索引</h2><p>为了更加高效地查询数据, 我们应该考虑使用索引.</p>
+<p>在PostgreSQL中, 我们可以通过如下地方式创建索引</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> [ <span class="keyword">UNIQUE</span> ] <span class="keyword">INDEX</span> [ CONCURRENTLY ] [ [ <span class="keyword">IF</span> <span class="keyword">NOT</span> <span class="keyword">EXISTS</span> ] <span class="keyword">name</span> ] <span class="keyword">ON</span> [ <span class="keyword">ONLY</span> ] table_name [ <span class="keyword">USING</span> method ]</span><br><span class="line">    ( &#123; column_name | ( expression ) &#125; [ <span class="keyword">COLLATE</span> <span class="keyword">collation</span> ] [ opclass ] [ <span class="keyword">ASC</span> | <span class="keyword">DESC</span> ] [ <span class="keyword">NULLS</span> &#123; <span class="keyword">FIRST</span> | <span class="keyword">LAST</span> &#125; ] [, ...] )</span><br><span class="line">    [ <span class="keyword">INCLUDE</span> ( column_name [, ...] ) ]</span><br><span class="line">    [ <span class="keyword">WITH</span> ( storage_parameter = <span class="keyword">value</span> [, ... ] ) ]</span><br><span class="line">    [ <span class="keyword">TABLESPACE</span> tablespace_name ]</span><br><span class="line">    [ <span class="keyword">WHERE</span> predicate ]</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-btree"><a href="#1-btree" class="headerlink" title="1. btree"></a>1. btree</h3><h4 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h4><p>绝大部分场景下btree索引均适用. 该索引可用来进行范围查找, 支持以下操作符</p>
+<ul>
+<li><code>&gt;</code>,<code>&gt;=</code>,<code>=</code>,<code>&lt;</code>, <code>&lt;=</code></li>
+<li>like</li>
+<li>between</li>
+<li>in</li>
+</ul>
+<p>同时，该类索引支持<code>多字段索引</code>, <code>只用索引的扫描</code>,<code>覆盖索引</code>和<code>唯一约束</code>。 </p>
+<p>但是该索引无法使用长度较长的key. 否则就会出现: <code>54000] ERROR: index row requires 21792 bytes, maximum size is 8191</code></p>
+<h4 id="用法"><a href="#用法" class="headerlink" title="用法"></a>用法</h4><p><strong>创建表与数据</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> test_btree</span><br><span class="line">(</span><br><span class="line">    <span class="keyword">key</span>   <span class="built_in">varchar</span>(<span class="number">32</span>),</span><br><span class="line">    <span class="keyword">value</span> <span class="built_in">int</span></span><br><span class="line">);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> test_btree</span><br><span class="line"><span class="keyword">select</span> <span class="keyword">md5</span>(random()::<span class="built_in">text</span>), (random() * <span class="number">1000000</span>)::<span class="built_in">int</span></span><br><span class="line"><span class="keyword">from</span> generate_series(<span class="number">1</span>, <span class="number">1000000</span>);</span><br></pre></td></tr></table></figure>
+
+<p><strong>创建索引</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">index</span> test_btree_key <span class="keyword">on</span> test_btree (<span class="keyword">key</span>) <span class="keyword">include</span> (<span class="keyword">value</span>);</span><br></pre></td></tr></table></figure>
+
+<p><strong>查询示例</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="keyword">sum</span>(<span class="keyword">value</span>)</span><br><span class="line"><span class="keyword">from</span> test_btree</span><br><span class="line"><span class="keyword">where</span> <span class="keyword">key</span> <span class="keyword">in</span> (<span class="string">'323816e2d4bb47d85d669b90089a2382'</span>, <span class="string">'f3180734688c85d1cf5b173b261e9521'</span>);</span><br></pre></td></tr></table></figure>
+<p><strong>查询计划</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Aggregate  (cost=8.89..8.90 rows=1 width=8) (actual time=0.024..0.024 rows=1 loops=1)</span><br><span class="line">  -&gt;  Index Only Scan using test_btree_key on test_btree  (cost=0.42..8.88 rows=2 width=4) (actual time=0.016..0.021 rows=2 loops=1)</span><br><span class="line">&quot;        Index Cond: (key = ANY (&apos;&#123;323816e2d4bb47d85d669b90089a2382,f3180734688c85d1cf5b173b261e9521&#125;&apos;::text[]))&quot;</span><br><span class="line">        Heap Fetches: 0</span><br><span class="line">Planning Time: 0.052 ms</span><br><span class="line">Execution Time: 0.038 ms</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-hash"><a href="#2-hash" class="headerlink" title="2. hash"></a>2. hash</h3><h4 id="介绍-1"><a href="#介绍-1" class="headerlink" title="介绍"></a>介绍</h4><p>hash索引适用于字段value非常长的场景. 只支持等值连接。 </p>
+<h4 id="用法-1"><a href="#用法-1" class="headerlink" title="用法"></a>用法</h4><p><strong>创建表</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> test_hash</span><br><span class="line">(</span><br><span class="line">    <span class="keyword">key</span>   <span class="built_in">text</span>,</span><br><span class="line">    <span class="keyword">value</span> <span class="built_in">int</span></span><br><span class="line">);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> test_hash</span><br><span class="line"><span class="keyword">select</span> <span class="keyword">md5</span>(random()::<span class="built_in">text</span>), (random() * <span class="number">1000000</span>)::<span class="built_in">int</span></span><br><span class="line"><span class="keyword">from</span> generate_series(<span class="number">1</span>, <span class="number">10000</span>);</span><br></pre></td></tr></table></figure>
+
+<p><strong>创建索引</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">index</span> test_hash_key <span class="keyword">on</span> test_hash <span class="keyword">using</span> <span class="keyword">hash</span> (<span class="keyword">key</span>);</span><br></pre></td></tr></table></figure>
+
+<p><strong>查询示例</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="keyword">key</span>, <span class="keyword">value</span></span><br><span class="line"><span class="keyword">from</span> test_hash</span><br><span class="line"><span class="keyword">where</span> <span class="keyword">key</span> = <span class="string">'70913971e3676ba202faba804a12f9bd'</span>;</span><br></pre></td></tr></table></figure>
+
+<p><strong>查询计划</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Index Scan using test_hash_key on test_hash  (cost=0.00..8.02 rows=1 width=37) (actual time=0.010..0.011 rows=1 loops=1)</span><br><span class="line">  Index Cond: (key = &apos;70913971e3676ba202faba804a12f9bd&apos;::text)</span><br><span class="line">Planning Time: 0.037 ms</span><br><span class="line">Execution Time: 0.021 ms</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-GiST"><a href="#3-GiST" class="headerlink" title="3. GiST"></a>3. GiST</h3><h4 id="介绍-2"><a href="#介绍-2" class="headerlink" title="介绍"></a>介绍</h4><p>Gist表示通用搜索树, 它是一种平衡的树结构的访问方法. 它可以用来解决空间，范围等几何问题. 例如，对于各种数据类型，执行各类操作符</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>索引数据类型</th>
+<th>可索引操作符</th>
+<th>排序操作符</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>box_ops</code></td>
+<td><code>box</code></td>
+<td><code>&amp;&amp;</code> <code>&amp;&gt;</code> <code>&amp;&lt;</code> `&amp;&lt;</td>
+<td><code></code>&gt;&gt;<code></code>&lt;&lt;<code></code>&lt;&lt;</td>
+</tr>
+<tr>
+<td><code>circle_ops</code></td>
+<td><code>circle</code></td>
+<td><code>&amp;&amp;</code> <code>&amp;&gt;</code> <code>&amp;&lt;</code> `&amp;&lt;</td>
+<td><code></code>&gt;&gt;<code></code>&lt;&lt;<code></code>&lt;&lt;</td>
+</tr>
+<tr>
+<td><code>inet_ops</code></td>
+<td><code>inet</code>, <code>cidr</code></td>
+<td><code>&amp;&amp;</code> <code>&gt;&gt;</code> <code>&gt;&gt;=</code> <code>&gt;</code> <code>&gt;=</code> <code>&lt;&gt;</code> <code>&lt;&lt;</code> <code>&lt;&lt;=</code> <code>&lt;</code> <code>&lt;=</code> <code>=</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>point_ops</code></td>
+<td><code>point</code></td>
+<td><code>&gt;&gt;</code> <code>&gt;^</code> <code>&lt;&lt;</code> <code>&lt;@</code> <code>&lt;@</code> <code>&lt;@</code> <code>&lt;^</code> <code>~=</code></td>
+<td><code>&lt;-&gt;</code></td>
+</tr>
+<tr>
+<td><code>poly_ops</code></td>
+<td><code>polygon</code></td>
+<td><code>&amp;&amp;</code> <code>&amp;&gt;</code> <code>&amp;&lt;</code> `&amp;&lt;</td>
+<td><code></code>&gt;&gt;<code></code>&lt;&lt;<code></code>&lt;&lt;</td>
+</tr>
+<tr>
+<td><code>range_ops</code></td>
+<td>任何范围类型</td>
+<td><code>&amp;&amp;</code> <code>&amp;&gt;</code> <code>&amp;&lt;</code> <code>&gt;&gt;</code> <code>&lt;&lt;</code> <code>&lt;@</code> `-</td>
+<td>-<code></code>=<code></code>@&gt;<code></code>@&gt;`</td>
+</tr>
+<tr>
+<td><code>tsquery_ops</code></td>
+<td><code>tsquery</code></td>
+<td><code>&lt;@</code> <code>@&gt;</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>tsvector_ops</code></td>
+<td><code>tsvector</code></td>
+<td><code>@@</code></td>
+<td></td>
+</tr>
+</tbody></table>
+<h4 id="用法-2"><a href="#用法-2" class="headerlink" title="用法"></a>用法</h4><p><strong>创建表</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">create table test_gist</span><br><span class="line">(</span><br><span class="line">    range int4range,</span><br><span class="line">    value int,</span><br><span class="line">    exclude using gist (range with &amp;&amp;)</span><br><span class="line">);</span><br><span class="line">insert into test_gist</span><br><span class="line">with a as (</span><br><span class="line">    select (random() * 1000)::int v</span><br><span class="line">    from generate_series(1, 100)</span><br><span class="line">)</span><br><span class="line">select int4range(v, v + 11), (random() * 100)::int</span><br><span class="line">from a</span><br><span class="line">on conflict do nothing;</span><br></pre></td></tr></table></figure>
+
+<p><strong>查询示例</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="keyword">range</span>, <span class="keyword">value</span></span><br><span class="line"><span class="keyword">from</span> test_gist</span><br><span class="line"><span class="keyword">where</span> <span class="keyword">range</span> @&gt; <span class="number">400</span>;</span><br></pre></td></tr></table></figure>
+
+<p><strong>查询计划</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Bitmap Heap Scan on test_gist  (cost=4.19..13.66 rows=6 width=36) (actual time=0.049..0.049 rows=1 loops=1)</span><br><span class="line">  Recheck Cond: (range @&gt; 400)</span><br><span class="line">  Heap Blocks: exact=1</span><br><span class="line">  -&gt;  Bitmap Index Scan on test_gist_range_excl  (cost=0.00..4.19 rows=6 width=0) (actual time=0.009..0.009 rows=1 loops=1)</span><br><span class="line">        Index Cond: (range @&gt; 400)</span><br><span class="line">Planning Time: 0.142 ms</span><br><span class="line">Execution Time: 0.068 ms</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-SP-GiST"><a href="#4-SP-GiST" class="headerlink" title="4. SP-GiST"></a>4. SP-GiST</h3><h4 id="介绍-3"><a href="#介绍-3" class="headerlink" title="介绍"></a>介绍</h4><p>SP-GiST是空间分割的(Space-Partitioned)GiST的省略语. 他的使用场景与GiST类似.  它支持二维点的SP-Gist操作符如下</p>
+<ul>
+<li><code>&lt;&lt;</code>, 是否严格在左</li>
+<li><code>&gt;&gt;</code>, 是否严格在右</li>
+<li><code>~=</code>, 与…相同</li>
+<li><code>&lt;@</code>, 包含或在…上</li>
+<li><code>&lt;^</code>, 低于(允许接触)</li>
+<li><code>&gt;^</code>,高于(允许接触)</li>
+</ul>
+<h4 id="用法-3"><a href="#用法-3" class="headerlink" title="用法"></a>用法</h4><p><strong>创建表</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> test_spgist</span><br><span class="line">(</span><br><span class="line">    <span class="keyword">key</span>   point,</span><br><span class="line">    <span class="keyword">value</span> <span class="built_in">int</span></span><br><span class="line">);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> test_spgist</span><br><span class="line"><span class="keyword">select</span> point(random() * <span class="number">1000</span>, random() * <span class="number">1000</span>), (random() * <span class="number">10000</span>)::<span class="built_in">int</span></span><br><span class="line"><span class="keyword">from</span> generate_series(<span class="number">1</span>, <span class="number">1000000</span>);</span><br></pre></td></tr></table></figure>
+
+<p><strong>创建索引</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">index</span> test_spgist_key <span class="keyword">on</span> test_spgist <span class="keyword">using</span> spgist (<span class="keyword">key</span>);</span><br></pre></td></tr></table></figure>
+
+<p><strong>查询示例</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="keyword">key</span>, <span class="keyword">value</span></span><br><span class="line"><span class="keyword">from</span> test_spgist</span><br><span class="line"><span class="keyword">where</span> <span class="keyword">key</span> &gt;&gt; point(<span class="number">100</span>, <span class="number">100</span>);</span><br></pre></td></tr></table></figure>
+
+<p><strong>查询计划</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Bitmap Heap Scan on test_spgist  (cost=2951.28..10571.28 rows=100000 width=20) (actual time=64.614..119.100 rows=899566 loops=1)</span><br><span class="line">&quot;  Recheck Cond: (key &gt;&gt; &apos;(100,100)&apos;::point)&quot;</span><br><span class="line">  Heap Blocks: exact=6370</span><br><span class="line">  -&gt;  Bitmap Index Scan on test_spgist_key  (cost=0.00..2926.28 rows=100000 width=0) (actual time=64.098..64.099 rows=899566 loops=1)</span><br><span class="line">&quot;        Index Cond: (key &gt;&gt; &apos;(100,100)&apos;::point)&quot;</span><br><span class="line">Planning Time: 0.048 ms</span><br><span class="line">Execution Time: 135.882 ms</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-GIN"><a href="#5-GIN" class="headerlink" title="5. GIN"></a>5. GIN</h3><h4 id="介绍-4"><a href="#介绍-4" class="headerlink" title="介绍"></a>介绍</h4><p>GIN为通用倒排索引, 用于处理索引项为组合值的情况. 比如所搜包含特定词的文档, 或拥有特定值的数组. 对于一维数组, 它支持以下的操作符</p>
+<ul>
+<li><code>&lt;@</code>, 被包含</li>
+<li><code>@&gt;</code>, 包含</li>
+<li><code>=</code>, 等于</li>
+<li><code>&amp;&amp;</code>, 重叠</li>
+</ul>
+<h4 id="用法-4"><a href="#用法-4" class="headerlink" title="用法"></a>用法</h4><p><strong>创建表</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> test_gin</span><br><span class="line">(</span><br><span class="line">    <span class="keyword">uuid</span> <span class="keyword">uuid</span>,</span><br><span class="line">    tags <span class="built_in">integer</span>[]</span><br><span class="line">);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> test_gin</span><br><span class="line"><span class="keyword">select</span> gen_random_uuid(), <span class="built_in">array</span> [(random() * <span class="number">100</span>)::<span class="built_in">int</span>,(random() * <span class="number">100</span>)::<span class="built_in">int</span>,(random() * <span class="number">100</span>)::<span class="built_in">int</span>]</span><br><span class="line"><span class="keyword">from</span> generate_series(<span class="number">1</span>, <span class="number">1000</span>);</span><br></pre></td></tr></table></figure>
+
+<p><strong>创建索引</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">index</span> test_gin_tags <span class="keyword">on</span> test_gin <span class="keyword">using</span> gin (tags);</span><br></pre></td></tr></table></figure>
+
+<p><strong>查询示例</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="keyword">uuid</span>, tags</span><br><span class="line"><span class="keyword">from</span> test_gin</span><br><span class="line"><span class="keyword">where</span> tags @&gt; <span class="built_in">array</span> [<span class="number">10</span>, <span class="number">2</span>];</span><br></pre></td></tr></table></figure>
+
+<p><strong>查询计划</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Bitmap Heap Scan on test_gin  (cost=12.00..16.02 rows=1 width=49) (actual time=0.018..0.019 rows=1 loops=1)</span><br><span class="line">&quot;  Recheck Cond: (tags @&gt; &apos;&#123;10,2&#125;&apos;::integer[])&quot;</span><br><span class="line">  Heap Blocks: exact=1</span><br><span class="line">  -&gt;  Bitmap Index Scan on test_gin_tags  (cost=0.00..12.00 rows=1 width=0) (actual time=0.012..0.012 rows=1 loops=1)</span><br><span class="line">&quot;        Index Cond: (tags @&gt; &apos;&#123;10,2&#125;&apos;::integer[])&quot;</span><br><span class="line">Planning Time: 0.078 ms</span><br><span class="line">Execution Time: 0.065 ms</span><br></pre></td></tr></table></figure>
+
+<h3 id="6-BRIN"><a href="#6-BRIN" class="headerlink" title="6. BRIN"></a>6. BRIN</h3><h4 id="介绍-5"><a href="#介绍-5" class="headerlink" title="介绍"></a>介绍</h4><p>BRIN索引(块范围索引, Block Range Indexes)维护不同范围内数据块的统计信息. 相比于btree索引, BRIN索引占用的空间更小.该索引用于线性相关较强的精确和范围查询.</p>
+<h4 id="用法-5"><a href="#用法-5" class="headerlink" title="用法"></a>用法</h4><p><strong>创建表</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> test_brin</span><br><span class="line">(</span><br><span class="line">    <span class="keyword">key</span>   <span class="built_in">int</span>,</span><br><span class="line">    <span class="keyword">value</span> <span class="built_in">int</span></span><br><span class="line">);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> test_brin</span><br><span class="line"><span class="keyword">select</span> g, (random() * <span class="number">1000000</span>)::<span class="built_in">int</span></span><br><span class="line"><span class="keyword">from</span> generate_series(<span class="number">1</span>, <span class="number">1000000</span>) g;</span><br></pre></td></tr></table></figure>
+
+<p><strong>创建索引</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">index</span> test_brin_key <span class="keyword">on</span> test_brin (<span class="keyword">key</span>) <span class="keyword">include</span> (<span class="keyword">value</span>);</span><br></pre></td></tr></table></figure>
+
+<p><strong>查询示例</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="keyword">key</span>, <span class="keyword">value</span></span><br><span class="line"><span class="keyword">from</span> test_brin</span><br><span class="line"><span class="keyword">where</span> <span class="keyword">key</span> <span class="keyword">between</span> <span class="number">11100</span> <span class="keyword">and</span> <span class="number">11150</span>;</span><br></pre></td></tr></table></figure>
+
+<p><strong>查询计划</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Index Only Scan using test_brin_key on test_brin  (cost=0.42..5.42 rows=50 width=8) (actual time=0.014..0.018 rows=51 loops=1)</span><br><span class="line">  Index Cond: ((key &gt;= 11100) AND (key &lt;= 11150))</span><br><span class="line">  Heap Fetches: 0</span><br><span class="line">Planning Time: 0.046 ms</span><br><span class="line">Execution Time: 0.029 ms</span><br></pre></td></tr></table></figure>
+
+<h3 id="7-bloom"><a href="#7-bloom" class="headerlink" title="7. bloom"></a>7. bloom</h3><h4 id="介绍-6"><a href="#介绍-6" class="headerlink" title="介绍"></a>介绍</h4><p>bloom索引虽然只能用于等值查询，但可通过多列字段索引高效的查询每一种可能的情况.</p>
+<h4 id="用法-6"><a href="#用法-6" class="headerlink" title="用法"></a>用法</h4><p><strong>创建表</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> test_bloom <span class="keyword">as</span></span><br><span class="line"><span class="keyword">select</span> <span class="keyword">md5</span>(random()::<span class="built_in">text</span>) <span class="keyword">as</span> i1,</span><br><span class="line">       <span class="keyword">md5</span>(random()::<span class="built_in">text</span>) <span class="keyword">as</span> i2,</span><br><span class="line">       <span class="keyword">md5</span>(random()::<span class="built_in">text</span>) <span class="keyword">as</span> i3</span><br><span class="line"><span class="keyword">from</span> generate_series(<span class="number">1</span>, <span class="number">1000000</span>);</span><br></pre></td></tr></table></figure>
+
+<p><strong>创建索引</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">index</span> test_bloom_all <span class="keyword">on</span> test_bloom <span class="keyword">using</span> bloom (i1, i2, i3);</span><br></pre></td></tr></table></figure>
+
+<p><strong>查询示例</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> i1,i2,i3</span><br><span class="line"><span class="keyword">from</span> test_bloom</span><br><span class="line"><span class="keyword">where</span> i2 = <span class="string">'2efeb41703124b0c5a3ac7cfbc86029f'</span>;</span><br></pre></td></tr></table></figure>
+
+<p><strong>查询计划</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Bitmap Heap Scan on test_bloom  (cost=15348.00..15352.01 rows=1 width=99) (actual time=5.933..8.660 rows=1 loops=1)</span><br><span class="line">  Recheck Cond: (i2 = '2efeb41703124b0c5a3ac7cfbc86029f'::text)</span><br><span class="line">  Rows Removed by Index Recheck: 4380</span><br><span class="line">  Heap Blocks: exact=3890</span><br><span class="line">  -&gt;  Bitmap Index Scan on test_bloom_all  (cost=0.00..15348.00 rows=1 width=0) (actual time=5.615..5.616 rows=4381 loops=1)</span><br><span class="line">        Index Cond: (i2 = '2efeb41703124b0c5a3ac7cfbc86029f'::text)</span><br><span class="line">Planning Time: 0.039 ms</span><br><span class="line">Execution Time: 8.678 ms</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/postgres/" rel="tag"># postgres</a>
+              <a href="/tags/sql/" rel="tag"># sql</a>
+              <a href="/tags/index/" rel="tag"># index</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2020/09/02/PostgreSQL%E6%8A%80%E6%9C%AF-IP%E8%8C%83%E5%9B%B4%E7%B4%A2%E5%BC%95/" rel="next" title="PostgreSQL技术-IP范围索引">
+                  <i class="fa fa-chevron-left"></i> PostgreSQL技术-IP范围索引
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#PostgreSQL技术-索引"><span class="nav-number">1.</span> <span class="nav-text">PostgreSQL技术-索引</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-btree"><span class="nav-number">1.1.</span> <span class="nav-text">1. btree</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#介绍"><span class="nav-number">1.1.1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#用法"><span class="nav-number">1.1.2.</span> <span class="nav-text">用法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-hash"><span class="nav-number">1.2.</span> <span class="nav-text">2. hash</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#介绍-1"><span class="nav-number">1.2.1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#用法-1"><span class="nav-number">1.2.2.</span> <span class="nav-text">用法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-GiST"><span class="nav-number">1.3.</span> <span class="nav-text">3. GiST</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#介绍-2"><span class="nav-number">1.3.1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#用法-2"><span class="nav-number">1.3.2.</span> <span class="nav-text">用法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-SP-GiST"><span class="nav-number">1.4.</span> <span class="nav-text">4. SP-GiST</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#介绍-3"><span class="nav-number">1.4.1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#用法-3"><span class="nav-number">1.4.2.</span> <span class="nav-text">用法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-GIN"><span class="nav-number">1.5.</span> <span class="nav-text">5. GIN</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#介绍-4"><span class="nav-number">1.5.1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#用法-4"><span class="nav-number">1.5.2.</span> <span class="nav-text">用法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-BRIN"><span class="nav-number">1.6.</span> <span class="nav-text">6. BRIN</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#介绍-5"><span class="nav-number">1.6.1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#用法-5"><span class="nav-number">1.6.2.</span> <span class="nav-text">用法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-bloom"><span class="nav-number">1.7.</span> <span class="nav-text">7. bloom</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#介绍-6"><span class="nav-number">1.7.1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#用法-6"><span class="nav-number">1.7.2.</span> <span class="nav-text">用法</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="souhup"
+    src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">souhup</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">souhup</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    <span title="站点总字数">35k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">58 分钟</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
